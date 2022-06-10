@@ -8,12 +8,14 @@ import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.validation.constraints.Max;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 
+import facades.Tmp1Facade;
 import facades.UserFacade;
 import utils.EMF_Creator;
 
@@ -24,6 +26,8 @@ import utils.EMF_Creator;
 public class UserResource {
     
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
+    private static final UserFacade FACADE =  UserFacade.getUserFacade(EMF);
+
     @Context
     private UriInfo context;
     Gson GSON = new Gson();
@@ -41,15 +45,8 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("all")
     public String allUsers() {
-
-        EntityManager em = EMF.createEntityManager();
-        try {
-            TypedQuery<User> query = em.createQuery ("select u from User u",entities.User.class);
-            List<User> users = query.getResultList();
-            return "[" + users.size() + "]";
-        } finally {
-            em.close();
-        }
+       List<UserDTO> userDTOs = FACADE.getAll();
+       return GSON.toJson(userDTOs);
     }
 
     @GET

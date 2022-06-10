@@ -1,10 +1,15 @@
 package facades;
 
+import dtos.UserDTO;
 import entities.Role;
 import entities.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+
 import security.errorhandling.AuthenticationException;
+
+import java.util.List;
 
 /**
  * @author lam@cphbusiness.dk
@@ -30,7 +35,7 @@ public class UserFacade {
         return instance;
     }
 
-    public User getVeryfiedUser(String username, String password) throws AuthenticationException {
+    public User getVerifiedUser(String username, String password) throws AuthenticationException {
         EntityManager em = emf.createEntityManager();
         User user;
         try {
@@ -66,7 +71,15 @@ public class UserFacade {
         return user;
     }
 
-    //ToDo: register admin, possibly change name and password
-
-
+    public List<UserDTO> getAll(){
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<User> query = em.createQuery("SELECT user FROM User user", User.class);
+            List<User> users = query.getResultList();
+            return UserDTO.getDtos(users);
+        } finally {
+            em.close();
+        }
+    }
+    
 }

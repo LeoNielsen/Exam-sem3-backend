@@ -19,6 +19,12 @@ public class UserDTO
         this.roles = getRoles(user.getRoleList());
     }
 
+    public static List<UserDTO> getDtos(List<User> users){
+        List<UserDTO> userdtos = new ArrayList();
+        users.forEach(user->userdtos.add(new UserDTO(user)));
+        return userdtos;
+    }
+    
     public User toUser () {
         return new User(this.userName, this.userPass);
     }
@@ -31,4 +37,6 @@ public class UserDTO
         }
         return stringRoles;
     }
+    
+    
 }
