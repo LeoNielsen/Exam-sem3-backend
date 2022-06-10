@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 
 @Entity
-@NamedQuery(name = "Tmp3.deleteAllRows", query = "DELETE from Tmp1")
+@NamedQuery(name = "Tmp3.deleteAllRows", query = "DELETE from Tmp3")
 public class Tmp3 implements Serializable {
 
     private static final long serialVersionUID = 1L;
