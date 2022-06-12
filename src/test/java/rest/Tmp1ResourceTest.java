@@ -1,5 +1,8 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dtos.Tmp1DTO;
 import entities.Tmp1;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
@@ -28,6 +31,8 @@ public class Tmp1ResourceTest {
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     private static Tmp1 tmp11, tmp12;
+
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -111,5 +116,44 @@ public class Tmp1ResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("dummy", equalTo(tmp12.getDummy()));
+    }
+
+    @Test
+    void createTmp1() {
+        Tmp1DTO tmp1DTO = new Tmp1DTO(new Tmp1("test"));
+        String data = GSON.toJson(tmp1DTO);
+
+        given()
+                .contentType("application/json")
+                .body(data)
+                .post("/tmp1/create").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("dummy", equalTo(tmp1DTO.getDummy()));
+    }
+
+    @Test
+    void updateTmp1() {
+        tmp11.setDummy("updated");
+        Tmp1DTO tmp1DTO = new Tmp1DTO(tmp11);
+        String data = GSON.toJson(tmp1DTO);
+
+        given()
+                .contentType("application/json")
+                .body(data)
+                .put("/tmp1/update/"+tmp11.getId()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("dummy", equalTo(tmp11.getDummy()));
+    }
+
+    @Test
+    void deleteTmp1() {
+        given()
+                .contentType("application/json")
+                .delete("/tmp1/delete/"+tmp11.getId()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("dummy", equalTo(tmp11.getDummy()));
     }
 }

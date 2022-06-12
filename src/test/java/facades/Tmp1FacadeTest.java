@@ -70,4 +70,33 @@ public class Tmp1FacadeTest {
 
         assertEquals("2", tmp1DTO.getDummy());
     }
+
+    @Test
+    void createTmp1() {
+        Tmp1 tmp1 = new Tmp1("test");
+        Tmp1DTO tmp1DTO = facade.createTmp1(new Tmp1DTO(tmp1));
+        List<Tmp1DTO> tmp1DTOs = facade.getAll();
+
+        assertEquals("test", tmp1DTO.getDummy());
+        assertEquals(3, tmp1DTOs.size());
+    }
+
+    @Test
+    void updateTmp1() {
+        tmp11.setDummy("updated");
+        Tmp1DTO tmp1DTO = facade.updateTmp1(tmp11.getId(),new Tmp1DTO(tmp11));
+        List<Tmp1DTO> tmp1DTOs = facade.getAll();
+
+        assertEquals("updated", tmp1DTO.getDummy());
+        assertEquals(2, tmp1DTOs.size());
+    }
+
+    @Test
+    void deleteTmp1() {
+        Tmp1DTO tmp1DTO = facade.deleteTmp1(tmp11.getId());
+        List<Tmp1DTO> tmp1DTOs = facade.getAll();
+
+        assertEquals("1", tmp1DTO.getDummy());
+        assertEquals(1, tmp1DTOs.size());
+    }
 }
