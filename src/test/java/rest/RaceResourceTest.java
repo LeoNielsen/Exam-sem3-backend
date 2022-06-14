@@ -99,6 +99,10 @@ public class RaceResourceTest {
         race1.addCar(car2);
         race2.addCar(car1);
 
+        car1.addRace(race1);
+        car1.addRace(race2);
+        car2.addRace(race1);
+
         try {
             em.getTransaction().begin();
             em.createNamedQuery("driver.deleteAllRows").executeUpdate();
