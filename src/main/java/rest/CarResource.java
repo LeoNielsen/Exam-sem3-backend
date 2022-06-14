@@ -6,6 +6,7 @@ import dtos.CarDTO;
 import facades.CarFacade;
 import utils.EMF_Creator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -35,6 +36,7 @@ public class CarResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed({"user", "admin"})
     @Path("/{id}")
     public String getCarById(@PathParam("id") long id) {
         CarDTO carDTO = FACADE.getCarById(id);
@@ -44,6 +46,7 @@ public class CarResource {
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
+    @RolesAllowed("admin")
     @Path("/create")
     public String createCar(String data) {
         CarDTO carDTO = GSON.fromJson(data, CarDTO.class);
@@ -54,6 +57,7 @@ public class CarResource {
     @PUT
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
+    @RolesAllowed("admin")
     @Path("/update/{id}")
     public String updateCar(@PathParam("id") long id, String data) {
         CarDTO carDTO = GSON.fromJson(data, CarDTO.class);
@@ -64,6 +68,7 @@ public class CarResource {
     @DELETE
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
+    @RolesAllowed("admin")
     @Path("/delete/{id}")
     public String deleteCar(@PathParam("id") long id) {
         CarDTO carDTO = FACADE.deleteCar(id);

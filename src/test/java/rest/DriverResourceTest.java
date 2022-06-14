@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dtos.DriverDTO;
 import entities.Car;
 import entities.Driver;
+import entities.Role;
 import entities.User;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
@@ -37,6 +38,20 @@ public class DriverResourceTest {
     private static Driver driver1, driver2;
     private static User user1, user2, user3;
     private static Car car1, car2, car3;
+
+    private static String securityToken;
+
+    private static void login(String role, String password) {
+        String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
+        securityToken = given()
+                .contentType("application/json")
+                .body(json)
+                //.when().post("/api/login")
+                .when().post("/login")
+                .then()
+                .extract().path("token");
+        //System.out.println("TOKEN ---> " + securityToken);
+    }
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -79,6 +94,12 @@ public class DriverResourceTest {
         user2 = new User("AnneW","test123");
         user3 = new User("test","test123");
 
+        Role userRole = new Role("user");
+        Role adminRole = new Role("admin");
+
+        user3.addRole(adminRole);
+        user3.addRole(userRole);
+
         car1 = new Car("Lynet","Merceds","Serie 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
         car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
         car3 = new Car("test","test","test","test","test","test",new ArrayList<>(), new ArrayList<>());
@@ -98,7 +119,10 @@ public class DriverResourceTest {
             em.createNamedQuery("user.deleteAllRows").executeUpdate();
             em.createNamedQuery("race.deleteAllRows").executeUpdate();
             em.createNamedQuery("car.deleteAllRows").executeUpdate();
+            em.createNamedQuery("role.deleteAllRows").executeUpdate();
 
+            em.persist(adminRole);
+            em.persist(userRole);
             em.persist(user1);
             em.persist(user2);
             em.persist(user3);
@@ -142,8 +166,11 @@ public class DriverResourceTest {
 
     @Test
     void getDriverById() {
+        login("test", "test123");
+
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .get("/driver/" + driver2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
@@ -152,11 +179,14 @@ public class DriverResourceTest {
 
     @Test
     void createDriver() {
+        login("test", "test123");
+
         DriverDTO driverDTO = new DriverDTO(new Driver("test","test","test","test",user3,car3));
         String data = GSON.toJson(driverDTO);
 
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(data)
                 .post("/driver/create").then()
                 .assertThat()
@@ -167,12 +197,15 @@ public class DriverResourceTest {
 
     @Test
     void updateDriver() {
+        login("test", "test123");
+
         driver1.setName("updated");
         DriverDTO driverDTO = new DriverDTO(driver1);
         String data = GSON.toJson(driverDTO);
 
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(data)
                 .put("/driver/update/" + driver1.getId()).then()
                 .assertThat()
@@ -182,8 +215,11 @@ public class DriverResourceTest {
 
     @Test
     void deleteDriver() {
+        login("test", "test123");
+
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .delete("/driver/delete/" + driver1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())

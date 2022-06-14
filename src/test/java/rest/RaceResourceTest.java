@@ -3,10 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.RaceDTO;
-import entities.Car;
-import entities.Driver;
-import entities.Race;
-import entities.User;
+import entities.*;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -40,6 +37,20 @@ public class RaceResourceTest {
     private static Race race1, race2, race3;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
+    private static String securityToken;
+
+    private static void login(String role, String password) {
+        String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
+        securityToken = given()
+                .contentType("application/json")
+                .body(json)
+                //.when().post("/api/login")
+                .when().post("/login")
+                .then()
+                .extract().path("token");
+        //System.out.println("TOKEN ---> " + securityToken);
+    }
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -80,6 +91,12 @@ public class RaceResourceTest {
         user2 = new User("AnneW","test123");
         user3 = new User("test","test123");
 
+        Role userRole = new Role("user");
+        Role adminRole = new Role("admin");
+
+        user3.addRole(adminRole);
+        user3.addRole(userRole);
+
         car1 = new Car("Lynet","Mercedes","Series 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
         car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
         car3 = new Car("test","test","test","test","test","test",new ArrayList<>(), new ArrayList<>());
@@ -109,7 +126,10 @@ public class RaceResourceTest {
             em.createNamedQuery("user.deleteAllRows").executeUpdate();
             em.createNamedQuery("race.deleteAllRows").executeUpdate();
             em.createNamedQuery("car.deleteAllRows").executeUpdate();
+            em.createNamedQuery("role.deleteAllRows").executeUpdate();
 
+            em.persist(adminRole);
+            em.persist(userRole);
             em.persist(user1);
             em.persist(user2);
             em.persist(user3);
@@ -156,8 +176,11 @@ public class RaceResourceTest {
 
     @Test
     void getRaceById() {
+        login("test", "test123");
+
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .get("/race/"+race2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
@@ -166,6 +189,8 @@ public class RaceResourceTest {
 
     @Test
     void createRace() {
+        login("test", "test123");
+
         race3 = new Race("test","test","test","test",new ArrayList<>());
         race3.addCar(car3);
         RaceDTO raceDTO = new RaceDTO(race3);
@@ -173,6 +198,7 @@ public class RaceResourceTest {
 
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(data)
                 .post("/race/create").then()
                 .assertThat()
@@ -183,12 +209,15 @@ public class RaceResourceTest {
 
     @Test
     void updateRace() {
+        login("test", "test123");
+
         race1.setName("updated");
         RaceDTO raceDTO = new RaceDTO(race1);
         String data = GSON.toJson(raceDTO);
 
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(data)
                 .put("/race/update/"+race1.getId()).then()
                 .assertThat()
@@ -198,8 +227,11 @@ public class RaceResourceTest {
 
     @Test
     void deleteRace() {
+        login("test", "test123");
+
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .delete("/race/delete/"+race1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())

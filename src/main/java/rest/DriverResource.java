@@ -6,6 +6,7 @@ import dtos.DriverDTO;
 import facades.DriverFacade;
 import utils.EMF_Creator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -35,6 +36,7 @@ public class DriverResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed({"user", "admin"})
     @Path("/{id}")
     public String getDriverById(@PathParam("id") long id) {
         DriverDTO driverDTO = FACADE.getDriverById(id);
@@ -44,6 +46,7 @@ public class DriverResource {
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
+    @RolesAllowed("admin")
     @Path("/create")
     public String createDriver(String data) {
         DriverDTO driverDTO = GSON.fromJson(data, DriverDTO.class);
@@ -54,6 +57,7 @@ public class DriverResource {
     @PUT
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
+    @RolesAllowed("admin")
     @Path("/update/{id}")
     public String updateDriver(@PathParam("id") long id, String data) {
         DriverDTO driverDTO = GSON.fromJson(data, DriverDTO.class);
@@ -64,6 +68,7 @@ public class DriverResource {
     @DELETE
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
+    @RolesAllowed("admin")
     @Path("/delete/{id}")
     public String deleteDriver(@PathParam("id") long id) {
         DriverDTO driverDTO = FACADE.deleteDriver(id);

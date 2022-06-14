@@ -70,7 +70,7 @@ public class LoginEndpointTest {
             em.createNamedQuery("user.deleteAllRows").executeUpdate();
             em.createNamedQuery("race.deleteAllRows").executeUpdate();
             em.createNamedQuery("car.deleteAllRows").executeUpdate();
-            em.createQuery("delete from Role").executeUpdate();
+            em.createNamedQuery("role.deleteAllRows").executeUpdate();
 
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");

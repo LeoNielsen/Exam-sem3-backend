@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dtos.CarDTO;
 import entities.Car;
 import entities.Driver;
+import entities.Role;
 import entities.User;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
@@ -33,6 +34,21 @@ public class CarResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
+
+    private static String securityToken;
+
+    private static void login(String role, String password) {
+        String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
+        securityToken = given()
+                .contentType("application/json")
+                .body(json)
+                //.when().post("/api/login")
+                .when().post("/login")
+                .then()
+                .extract().path("token");
+        //System.out.println("TOKEN ---> " + securityToken);
+    }
+
     private static Driver driver1, driver2, driver3;
     private static User user1, user2, user3;
     private static Car car1, car2, car3;
@@ -78,6 +94,12 @@ public class CarResourceTest {
         user2 = new User("AnneW","test123");
         user3 = new User("test","test123");
 
+        Role userRole = new Role("user");
+        Role adminRole = new Role("admin");
+
+        user3.addRole(adminRole);
+        user3.addRole(userRole);
+
         car1 = new Car("Lynet","Merceds","Serie 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
         car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
 
@@ -95,6 +117,10 @@ public class CarResourceTest {
             em.createNamedQuery("user.deleteAllRows").executeUpdate();
             em.createNamedQuery("race.deleteAllRows").executeUpdate();
             em.createNamedQuery("car.deleteAllRows").executeUpdate();
+            em.createNamedQuery("role.deleteAllRows").executeUpdate();
+
+            em.persist(adminRole);
+            em.persist(userRole);
             em.persist(user1);
             em.persist(user2);
             em.persist(user3);
@@ -138,8 +164,10 @@ public class CarResourceTest {
 
     @Test
     void getCarById() {
+        login("test", "test123");
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .get("/car/"+car2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
@@ -148,6 +176,7 @@ public class CarResourceTest {
 
     @Test
     void createCar() {
+        login("test", "test123");
         car3 = new Car("test","test","test","test","test","test", new ArrayList<>(), new ArrayList<>());
         car3.addDriver(driver3);
         CarDTO carDTO = new CarDTO(car3);
@@ -155,6 +184,7 @@ public class CarResourceTest {
 
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(data)
                 .post("/car/create").then()
                 .assertThat()
@@ -165,12 +195,14 @@ public class CarResourceTest {
 
     @Test
     void updateCar() {
+        login("test", "test123");
         car1.setName("updated");
         CarDTO carDTO = new CarDTO(car1);
         String data = GSON.toJson(carDTO);
 
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(data)
                 .put("/car/update/"+car1.getId()).then()
                 .assertThat()
@@ -180,8 +212,10 @@ public class CarResourceTest {
 
     @Test
     void deleteCar() {
+        login("test", "test123");
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .delete("/car/delete/"+car1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())

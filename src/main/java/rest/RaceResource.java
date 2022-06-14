@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import dtos.RaceDTO;
 import utils.EMF_Creator;
 import facades.RaceFacade;
+
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -34,6 +36,7 @@ public class RaceResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed({"user", "admin"})
     @Path("/{id}")
     public String getRaceById(@PathParam("id") long id) {
         RaceDTO raceDTO = FACADE.getRaceById(id);
@@ -44,6 +47,7 @@ public class RaceResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/create")
+    @RolesAllowed("admin")
     public String createRace(String data) {
         RaceDTO raceDTO = GSON.fromJson(data, RaceDTO.class);
         raceDTO = FACADE.createRace(raceDTO);
@@ -54,6 +58,7 @@ public class RaceResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/update/{id}")
+    @RolesAllowed("admin")
     public String updateRace(@PathParam("id") long id, String data) {
         RaceDTO raceDTO = GSON.fromJson(data, RaceDTO.class);
         raceDTO = FACADE.updateRace(id, raceDTO);
@@ -64,9 +69,9 @@ public class RaceResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/delete/{id}")
+    @RolesAllowed("admin")
     public String deleteRace(@PathParam("id") long id) {
         RaceDTO raceDTO = FACADE.deleteRace(id);
         return GSON.toJson(raceDTO);
     }
-
 }
