@@ -121,6 +121,7 @@ public class RaceFacadeTest {
         RaceDTO raceDTO = facade.getRaceById(race2.getId());
 
         assertEquals("Le Mans", raceDTO.getName());
+        assertEquals(car1.getId(), raceDTO.getCarsId().get(0));
     }
 
     @Test

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
@@ -107,6 +108,7 @@ public class CarFacadeTest {
         CarDTO carDTO = facade.getCarById(car2.getId());
 
         assertEquals("Bravo", carDTO.getName());
+        assertEquals(driver2.getId(), carDTO.getDriversIds().get(0));
     }
 
     @Test
@@ -117,6 +119,7 @@ public class CarFacadeTest {
         List<CarDTO> carDTOS = facade.getAll();
 
         assertEquals("test", carDTO.getName());
+        assertEquals(0, carDTO.getDriversIds().size());
         assertEquals(3, carDTOS.size());
     }
 

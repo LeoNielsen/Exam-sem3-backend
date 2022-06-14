@@ -176,7 +176,8 @@ public class DriverResourceTest {
                 .get("/driver/" + driver2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo(driver2.getName()));
+                .body("name", equalTo(driver2.getName()))
+                .body("user", equalTo(driver2.getUser().getUserName()));
     }
 
     @Test
@@ -213,7 +214,8 @@ public class DriverResourceTest {
                 .put("/driver/update/" + driver1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo(driver1.getName()));
+                .body("name", equalTo(driver1.getName()))
+                .body("carId", equalTo(Integer.valueOf(String.valueOf(driver1.getCar().getId()))));
     }
 
     @Test
@@ -230,7 +232,7 @@ public class DriverResourceTest {
     }
 
     @Test
-    void testGetDriverById() {
+    void TestGetRacesByDriver() {
         login("test", "test123");
 
         given()

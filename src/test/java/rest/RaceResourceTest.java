@@ -197,7 +197,8 @@ public class RaceResourceTest {
                 .get("/race/" + race2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo(race2.getName()));
+                .body("name", equalTo(race2.getName()))
+                .body("carsId", hasItem(Integer.valueOf(String.valueOf(car1.getId()))));
     }
 
     @Test

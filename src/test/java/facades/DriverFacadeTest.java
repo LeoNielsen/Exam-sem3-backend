@@ -108,6 +108,7 @@ public class DriverFacadeTest {
         DriverDTO driverDTO = facade.getDriverById(driver2.getId());
 
         assertEquals("Anna West", driverDTO.getName());
+        assertEquals(user2.getUserName(), driverDTO.getUser());
     }
 
     @Test

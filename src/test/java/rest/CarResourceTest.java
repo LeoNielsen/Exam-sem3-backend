@@ -181,7 +181,8 @@ public class CarResourceTest {
                 .get("/car/"+car2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo(car2.getName()));
+                .body("name", equalTo(car2.getName()))
+                .body("driversIds", hasItems(Integer.valueOf(String.valueOf(driver2.getId()))));
     }
 
     @Test
@@ -207,6 +208,7 @@ public class CarResourceTest {
     void updateCar() {
         login("test", "test123");
         car1.setName("updated");
+        car1.setDrivers(new ArrayList<>());
         CarDTO carDTO = new CarDTO(car1);
         String data = GSON.toJson(carDTO);
 
@@ -217,7 +219,8 @@ public class CarResourceTest {
                 .put("/car/update/"+car1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo(car1.getName()));
+                .body("name", equalTo(car1.getName()))
+                .body("driverIds", equalTo(null));
     }
 
     @Test
