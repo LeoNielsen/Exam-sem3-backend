@@ -88,11 +88,16 @@ public class DriverFacade {
         EntityManager em = emf.createEntityManager();
         try {
             Driver driver = em.find(Driver.class, id);
+
+            Car oldCar = driver.getCar();
+            oldCar.removeDriver(driver);
+
             driver.setId(id);
             driver.setName(driverDTO.getName());
             driver.setBirthYear(driverDTO.getBirthYear());
             driver.setExperience(driverDTO.getExperience());
             driver.setGender(driverDTO.getGender());
+
 
             Car car = em.find(Car.class,driverDTO.getCarId());
 
@@ -100,8 +105,9 @@ public class DriverFacade {
             car.addDriver(driver);
 
             em.getTransaction().begin();
-            em.merge(car);
             em.merge(driver);
+            em.merge(car);
+            em.merge(oldCar);
             em.getTransaction().commit();
             return new DriverDTO(driver);
         } finally {
