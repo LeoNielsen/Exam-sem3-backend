@@ -19,7 +19,7 @@ public class Race implements Serializable {
     String startDate;
     String duration;
 
-    @ManyToMany
+    @ManyToMany (mappedBy = "races")
     List<Car> cars = new ArrayList<>();
     
     public Race() {

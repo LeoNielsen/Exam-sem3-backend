@@ -24,7 +24,7 @@ public class Car implements Serializable {
     @OneToMany (mappedBy = "car")
     List<Driver> drivers = new ArrayList<>();
 
-    @ManyToMany (mappedBy = "cars")
+    @ManyToMany
     List<Race> races = new ArrayList<>();
 
     public Car() {

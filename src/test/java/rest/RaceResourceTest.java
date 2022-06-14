@@ -203,6 +203,8 @@ public class RaceResourceTest {
 
         race3 = new Race("test","test","test","test",new ArrayList<>());
         race3.addCar(car3);
+        race3.addCar(car2);
+        race3.addCar(car1);
         RaceDTO raceDTO = new RaceDTO(race3);
         String data = GSON.toJson(raceDTO);
 
@@ -214,7 +216,7 @@ public class RaceResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo(raceDTO.getName()))
-                .body("carsId", hasItem(Integer.valueOf(String.valueOf(car3.getId()))));
+                .body("carsId", hasItems(Integer.valueOf(String.valueOf(car2.getId())),Integer.valueOf(String.valueOf(car3.getId()))));
     }
 
     @Test
