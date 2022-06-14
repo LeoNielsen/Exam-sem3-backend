@@ -3,6 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.DriverDTO;
+import dtos.RaceDTO;
 import facades.DriverFacade;
 import utils.EMF_Creator;
 
@@ -41,6 +42,15 @@ public class DriverResource {
     public String getDriverById(@PathParam("id") long id) {
         DriverDTO driverDTO = FACADE.getDriverById(id);
         return GSON.toJson(driverDTO);
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed({"user"})
+    @Path("/races/{id}/")
+    public String getRacesByDriver(@PathParam("id") long id) {
+        List<RaceDTO> raceDTOs = FACADE.getRacesByDriver(id);
+        return GSON.toJson(raceDTOs);
     }
 
     @POST

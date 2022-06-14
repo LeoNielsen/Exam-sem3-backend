@@ -3,10 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.DriverDTO;
-import entities.Car;
-import entities.Driver;
-import entities.Role;
-import entities.User;
+import entities.*;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -26,8 +23,7 @@ import java.net.URI;
 import java.util.ArrayList;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.*;
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
 
@@ -38,6 +34,7 @@ public class DriverResourceTest {
     private static Driver driver1, driver2;
     private static User user1, user2, user3;
     private static Car car1, car2, car3;
+    private static Race race1;
 
     private static String securityToken;
 
@@ -100,6 +97,8 @@ public class DriverResourceTest {
         user3.addRole(adminRole);
         user3.addRole(userRole);
 
+        race1 = new Race("test","test","test","test",new ArrayList<>());
+
         car1 = new Car("Lynet","Merceds","Serie 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
         car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
         car3 = new Car("test","test","test","test","test","test",new ArrayList<>(), new ArrayList<>());
@@ -112,6 +111,8 @@ public class DriverResourceTest {
         car2.addDriver(driver2);
         driver1.setCar(car1);
         driver2.setCar(car2);
+        race1.addCar(car1);
+        car1.addRace(race1);
 
         try {
             em.getTransaction().begin();
@@ -131,6 +132,7 @@ public class DriverResourceTest {
             em.persist(car1);
             em.persist(car2);
             em.persist(car3);
+            em.persist(race1);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -225,5 +227,18 @@ public class DriverResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo(driver1.getName()));
+    }
+
+    @Test
+    void testGetDriverById() {
+        login("test", "test123");
+
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .get("/driver/races/" + driver1.getId()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("name", hasItem(race1.getName()));
     }
 }

@@ -1,8 +1,10 @@
 package facades;
 
 import dtos.DriverDTO;
+import dtos.RaceDTO;
 import entities.Car;
 import entities.Driver;
+import entities.Race;
 import entities.User;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
@@ -24,6 +26,7 @@ public class DriverFacadeTest {
     private static Driver driver1, driver2;
     private static User user1, user2, user3;
     private static Car car1, car2, car3;
+    private static Race race1;
 
 
     public DriverFacadeTest() {
@@ -48,6 +51,8 @@ public class DriverFacadeTest {
         user2 = new User("AnneW","test123");
         user3 = new User("test","test123");
 
+        race1 = new Race("test","test","test","test",new ArrayList<>());
+
         car1 = new Car("Lynet","Merceds","Serie 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
         car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
         car3 = new Car("test","test","test","test","test","test",new ArrayList<>(), new ArrayList<>());
@@ -60,6 +65,8 @@ public class DriverFacadeTest {
         car2.addDriver(driver2);
         driver1.setCar(car1);
         driver2.setCar(car2);
+        race1.addCar(car1);
+        car1.addRace(race1);
 
         try {
             em.getTransaction().begin();
@@ -76,6 +83,7 @@ public class DriverFacadeTest {
             em.persist(car1);
             em.persist(car2);
             em.persist(car3);
+            em.persist(race1);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -130,5 +138,12 @@ public class DriverFacadeTest {
 
         assertEquals("James Brown", driverDTO.getName());
         assertEquals(1, driverDTOS.size());
+    }
+
+    @Test
+    void getRacesByDriver() {
+        List<RaceDTO> raceDTOS = facade.getRacesByDriver(driver1.getId());
+
+        assertEquals(race1.getName(), raceDTOS.get(0).getName());
     }
 }

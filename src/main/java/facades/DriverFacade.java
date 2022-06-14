@@ -1,13 +1,17 @@
 package facades;
 
+import dtos.CarDTO;
 import dtos.DriverDTO;
+import dtos.RaceDTO;
 import entities.Car;
 import entities.Driver;
+import entities.Race;
 import entities.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 //import error handling.RenameMeNotFoundException;
@@ -114,6 +118,17 @@ public class DriverFacade {
             em.remove(driver);
             em.getTransaction().commit();
             return new DriverDTO(driver);
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<RaceDTO> getRacesByDriver(long id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            Driver driver = em.find(Driver.class, id);
+            List<Race> races = new ArrayList<>(driver.getCar().getRaces());
+            return RaceDTO.getDTOs(races);
         } finally {
             em.close();
         }
