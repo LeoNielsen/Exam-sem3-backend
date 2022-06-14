@@ -76,17 +76,22 @@ public class RaceFacade {
 
         Race race = new Race(raceDTO.getName(), raceDTO.getLocation(), raceDTO.getStartDate(), raceDTO.getDuration(), new ArrayList<>());
 
+        if (raceDTO.getCarsId() != null) {
+            for (long carId : raceDTO.getCarsId()) {
+                Car car = em.find(Car.class, carId);
+                car.addRace(race);
+                race.addCar(car);
+            }
+        }
+
         try {
             em.getTransaction().begin();
-            if (raceDTO.getCarsId() != null) {
-                for (long carId : raceDTO.getCarsId()) {
-                    Car car = em.find(Car.class, carId);
-                    car.addRace(race);
-                    race.addCar(car);
-                    em.merge(car);
-                }
-            }
             em.persist(race);
+
+            for (Car car : race.getCars()) {
+                em.merge(car);
+            }
+
             em.getTransaction().commit();
             return new RaceDTO(race);
         } finally {
@@ -98,6 +103,13 @@ public class RaceFacade {
         EntityManager em = emf.createEntityManager();
         try {
             Race race = em.find(Race.class, id);
+            em.getTransaction().begin();
+
+            for (Car car : race.getCars()) {
+                car.removeRace(race);
+                em.merge(car);
+            }
+
             race.setId(id);
             race.setName(raceDTO.getName());
             race.setLocation(raceDTO.getLocation());
@@ -105,12 +117,7 @@ public class RaceFacade {
             race.setDuration(raceDTO.getDuration());
             race.setName(raceDTO.getName());
 
-            em.getTransaction().begin();
 
-            for (Car car : race.getCars()) {
-                car.removeRace(race);
-                em.merge(car);
-            }
 
             race.setCars(new ArrayList<>());
 

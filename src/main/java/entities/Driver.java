@@ -18,6 +18,7 @@ public class Driver implements Serializable {
     String gender;
 
     @OneToOne
+    @JoinColumn(unique = true)
     User user;
 
     @ManyToOne
