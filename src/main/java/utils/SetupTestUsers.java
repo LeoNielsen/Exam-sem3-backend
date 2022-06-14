@@ -2,7 +2,6 @@ package utils;
 
 
 import entities.*;
-import facades.UserFacade;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -31,7 +30,7 @@ public class SetupTestUsers {
 
     Driver driver1 = new Driver("James Brown","1997","amateur","male", user, car1);
     Driver driver2 = new Driver("Anna West", "2001", "professional", "female",admin, car2);
-    Driver driver3 = new Driver("test", "test", "test", "tset",both, car3);
+    Driver driver3 = new Driver("test", "test", "test", "test",both, car3);
 
     Race race1 = new Race("Nas", "Miami", "27-06-22", "210", new ArrayList<>());
     Race race2 = new Race("Le Mans", "Nice", "17-08-22", "210", new ArrayList<>());

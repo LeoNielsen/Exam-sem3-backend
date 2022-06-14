@@ -3,7 +3,6 @@ package facades;
 import dtos.CarDTO;
 import dtos.RaceDTO;
 import entities.Car;
-import entities.Driver;
 import entities.Race;
 
 import java.util.ArrayList;

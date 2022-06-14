@@ -37,7 +37,7 @@ public class UserResource {
         return "{\"msg\":\"Hello anonymous\"}";
     }
 
-    //Just to verify if the database is setup
+    //Just to verify if the database is set up
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("all")
@@ -51,8 +51,8 @@ public class UserResource {
     @Path("user")
     @RolesAllowed({"user"})
     public String getFromUser() {
-        String thisuser = securityContext.getUserPrincipal().getName();
-        return "{\"msg\": \"Hello to User: " + thisuser + "\"}";
+        String thisUser = securityContext.getUserPrincipal().getName();
+        return "{\"msg\": \"Hello to User: " + thisUser + "\"}";
     }
 
     @GET
@@ -60,8 +60,8 @@ public class UserResource {
     @Path("admin")
     @RolesAllowed("admin")
     public String getFromAdmin() {
-        String thisuser = securityContext.getUserPrincipal().getName();
-        return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
+        String thisUser = securityContext.getUserPrincipal().getName();
+        return "{\"msg\": \"Hello to (admin) User: " + thisUser + "\"}";
     }
 
     @GET
@@ -70,9 +70,9 @@ public class UserResource {
     @RolesAllowed({"user", "admin"})
 
     public String getUserName() {
-        String thisuser = securityContext.getUserPrincipal().getName();
+        String thisUser = securityContext.getUserPrincipal().getName();
         EntityManager em = EMF.createEntityManager();
-        User currentUser = em.find(User.class, thisuser);
+        User currentUser = em.find(User.class, thisUser);
         UserDTO userDTO = new UserDTO(currentUser);
         return GSON.toJson(userDTO);
     }

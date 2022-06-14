@@ -22,11 +22,6 @@ public class UserFacade {
     private UserFacade() {
     }
 
-    /**
-     *
-     * @param _emf
-     * @return the instance of this facade.
-     */
     public static UserFacade getUserFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
@@ -76,7 +71,7 @@ public class UserFacade {
         try {
             TypedQuery<User> query = em.createQuery("SELECT user FROM User user", User.class);
             List<User> users = query.getResultList();
-            return UserDTO.getDtos(users);
+            return UserDTO.getDTOs(users);
         } finally {
             em.close();
         }

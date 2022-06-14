@@ -8,7 +8,6 @@ package dtos;
 import entities.Car;
 import entities.Race;
 
-import javax.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class RaceDTO {
     String location;
     String startDate;
     String duration;
-    List<Long> carsId = new ArrayList<>();
+    List<Long> carsId;
 
     public RaceDTO(Race race) {
         if(race.getId() != null)
@@ -35,7 +34,7 @@ public class RaceDTO {
     }
 
     public static List<RaceDTO> getDTOs(List<Race> races){
-        List<RaceDTO> raceDTOS = new ArrayList();
+        List<RaceDTO> raceDTOS = new ArrayList<>();
         races.forEach(race -> raceDTOS.add(new RaceDTO(race)));
         return raceDTOS;
     }

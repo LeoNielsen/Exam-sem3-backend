@@ -39,8 +39,8 @@ public class RaceResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/getcars/{id}")
     public String getCars(@PathParam("id") long id) {
-        List<CarDTO> carDTOS = FACADE.getCars(id);
-        return GSON.toJson(carDTOS);
+        List<CarDTO> carDTOs = FACADE.getCars(id);
+        return GSON.toJson(carDTOs);
     }
 
     @GET

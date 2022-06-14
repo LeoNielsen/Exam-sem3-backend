@@ -6,9 +6,7 @@
 package dtos;
 
 import entities.Driver;
-import entities.User;
 
-import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +35,7 @@ public class DriverDTO {
     }
 
     public static List<DriverDTO> getDTOs(List<Driver> drivers) {
-        List<DriverDTO> driverDTOS = new ArrayList();
+        List<DriverDTO> driverDTOS = new ArrayList<>();
         drivers.forEach(driver -> driverDTOS.add(new DriverDTO(driver)));
         return driverDTOS;
     }

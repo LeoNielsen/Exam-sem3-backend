@@ -19,10 +19,10 @@ public class UserDTO
         this.roles = getRoles(user.getRoleList());
     }
 
-    public static List<UserDTO> getDtos(List<User> users){
-        List<UserDTO> userdtos = new ArrayList();
-        users.forEach(user->userdtos.add(new UserDTO(user)));
-        return userdtos;
+    public static List<UserDTO> getDTOs(List<User> users){
+        List<UserDTO> userDTOS = new ArrayList<>();
+        users.forEach(user->userDTOS.add(new UserDTO(user)));
+        return userDTOS;
     }
     
     public User toUser () {

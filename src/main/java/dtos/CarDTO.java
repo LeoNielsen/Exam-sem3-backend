@@ -24,8 +24,8 @@ public class CarDTO {
     String year;
     String sponsor;
     String color;
-    List<Long> driversIds = new ArrayList<>();
-    List<Long> racesIds = new ArrayList<>();
+    List<Long> driversIds;
+    List<Long> racesIds;
 
     public CarDTO(Car car) {
         if(car.getId() != null)
@@ -41,7 +41,7 @@ public class CarDTO {
     }
 
     public static List<CarDTO> getDTOs(List<Car> cars){
-        List<CarDTO> carDTOs = new ArrayList();
+        List<CarDTO> carDTOs = new ArrayList<>();
         cars.forEach(car -> carDTOs.add(new CarDTO(car)));
         return carDTOs;
     }
@@ -96,7 +96,4 @@ public class CarDTO {
         return driversIds;
     }
 
-    public List<Long> getRacesIds() {
-        return racesIds;
-    }
 }

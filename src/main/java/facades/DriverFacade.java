@@ -1,6 +1,5 @@
 package facades;
 
-import dtos.CarDTO;
 import dtos.DriverDTO;
 import dtos.RaceDTO;
 import entities.Car;
