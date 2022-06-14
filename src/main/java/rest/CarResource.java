@@ -2,71 +2,73 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dtos.Tmp1DTO;
+import dtos.CarDTO;
+import facades.CarFacade;
 import utils.EMF_Creator;
-import facades.Tmp1Facade;
+
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("tmp1")
-public class Tmp1Resource {
+@Path("car")
+public class CarResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
        
-    private static final Tmp1Facade FACADE =  Tmp1Facade.getTmp1Facade(EMF);
+    private static final CarFacade FACADE =  CarFacade.getCarFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
             
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public String hello() {
-        return "{\"msg\":\"Hello from tmp1\"}";
+        return "{\"msg\":\"Hello from car\"}";
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/all")
     public String getAll() {
-        List<Tmp1DTO> tmp1DTOs = FACADE.getAll();
-        return GSON.toJson(tmp1DTOs);
+        List<CarDTO> carDTOS = FACADE.getAll();
+        return GSON.toJson(carDTOS);
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
-    public String getTmp1ById(@PathParam("id") long id) {
-        Tmp1DTO tmp1DTO = FACADE.getTmp1ById(id);
-        return GSON.toJson(tmp1DTO);
+    public String getCarById(@PathParam("id") long id) {
+        CarDTO carDTO = FACADE.getCarById(id);
+        return GSON.toJson(carDTO);
     }
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/create")
-    public String createTmp1(String data) {
-        Tmp1DTO tmp1DTO = GSON.fromJson(data, Tmp1DTO.class);
-        tmp1DTO = FACADE.createTmp1(tmp1DTO);
-        return GSON.toJson(tmp1DTO);
+    public String createCar(String data) {
+        CarDTO carDTO = GSON.fromJson(data, CarDTO.class);
+        carDTO = FACADE.createCar(carDTO);
+        return GSON.toJson(carDTO);
     }
 
     @PUT
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/update/{id}")
-    public String updateTmp1(@PathParam("id") long id, String data) {
-        Tmp1DTO tmp1DTO = GSON.fromJson(data, Tmp1DTO.class);
-        tmp1DTO = FACADE.updateTmp1(id,tmp1DTO);
-        return GSON.toJson(tmp1DTO);
+    public String updateCar(@PathParam("id") long id, String data) {
+        CarDTO carDTO = GSON.fromJson(data, CarDTO.class);
+        carDTO = FACADE.updateCar(id, carDTO);
+        return GSON.toJson(carDTO);
     }
 
     @DELETE
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/delete/{id}")
-    public String deleteTmp1(@PathParam("id") long id) {
-        Tmp1DTO tmp1DTO = FACADE.deleteTmp1(id);
-        return GSON.toJson(tmp1DTO);
+    public String deleteCar(@PathParam("id") long id) {
+        CarDTO carDTO = FACADE.deleteCar(id);
+        return GSON.toJson(carDTO);
     }
+
 
 }

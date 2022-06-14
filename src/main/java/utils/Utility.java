@@ -5,7 +5,7 @@
  */
 package utils;
 
-import dtos.Tmp1DTO;
+import dtos.RaceDTO;
 import java.util.Properties;
 import java.util.Set;
 import com.google.gson.*;
@@ -28,12 +28,12 @@ public class Utility {
             }
     }
     
-    public static Tmp1DTO json2DTO(String json) throws UnsupportedEncodingException{
-            return gson.fromJson(new String(json.getBytes("UTF8")), Tmp1DTO.class);
+    public static RaceDTO json2DTO(String json) throws UnsupportedEncodingException{
+            return gson.fromJson(new String(json.getBytes("UTF8")), RaceDTO.class);
     }
     
-    public static String DTO2json(Tmp1DTO rmDTO){
-        return gson.toJson(rmDTO, Tmp1DTO.class);
+    public static String DTO2json(RaceDTO rmDTO){
+        return gson.toJson(rmDTO, RaceDTO.class);
     }
     
     public static void main(String[] args) throws UnsupportedEncodingException {
@@ -41,7 +41,7 @@ public class Utility {
         
         //Test json2DTO and back again
         String str2 = "{'id':1, 'str1':'Dette er den første tekst', 'str2':'Her er den ANDEN'}";
-        Tmp1DTO rmDTO = json2DTO(str2);
+        RaceDTO rmDTO = json2DTO(str2);
         System.out.println(rmDTO);
         
         String backAgain = DTO2json(rmDTO);

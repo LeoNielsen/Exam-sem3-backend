@@ -2,35 +2,36 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dtos.Tmp1DTO;
-import entities.Tmp1;
-import utils.EMF_Creator;
+import dtos.CarDTO;
+import entities.Car;
 import io.restassured.RestAssured;
-import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
-import java.net.URI;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import utils.EMF_Creator;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
 
-public class Tmp1ResourceTest {
+public class CarResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
-    private static Tmp1 tmp11, tmp12;
+    private static Car car1, car2;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -68,13 +69,13 @@ public class Tmp1ResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        tmp11 = new Tmp1("1");
-        tmp12 = new Tmp1("2");
+        car1 = new Car("1");
+        car2 = new Car("2");
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("Tmp1.deleteAllRows").executeUpdate();
-            em.persist(tmp11);
-            em.persist(tmp12);
+            em.createNamedQuery("car.deleteAllRows").executeUpdate();
+            em.persist(car1);
+            em.persist(car2);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -83,7 +84,7 @@ public class Tmp1ResourceTest {
 
     @Test
     public void testServerIsUp() {
-        given().when().get("/tmp1").then().statusCode(200);
+        given().when().get("/car").then().statusCode(200);
     }
 
     //This test assumes the database contains two rows
@@ -91,10 +92,10 @@ public class Tmp1ResourceTest {
     public void hello() {
         given()
                 .contentType("application/json")
-                .get("/tmp1/").then()
+                .get("/car/").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("msg", equalTo("Hello from tmp1"));
+                .body("msg", equalTo("Hello from car"));
     }
 
 
@@ -102,58 +103,58 @@ public class Tmp1ResourceTest {
     void getAll() {
         given()
                 .contentType("application/json")
-                .get("/tmp1/all").then()
+                .get("/car/all").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("dummy", hasItems("1","2"));
     }
 
     @Test
-    void getTmp1ById() {
+    void getCarById() {
         given()
                 .contentType("application/json")
-                .get("/tmp1/"+tmp12.getId()).then()
+                .get("/car/"+car2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(tmp12.getDummy()));
+                .body("dummy", equalTo(car2.getDummy()));
     }
 
     @Test
-    void createTmp1() {
-        Tmp1DTO tmp1DTO = new Tmp1DTO(new Tmp1("test"));
-        String data = GSON.toJson(tmp1DTO);
+    void createCar() {
+        CarDTO carDTO = new CarDTO(new Car("test"));
+        String data = GSON.toJson(carDTO);
 
         given()
                 .contentType("application/json")
                 .body(data)
-                .post("/tmp1/create").then()
+                .post("/car/create").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(tmp1DTO.getDummy()));
+                .body("dummy", equalTo(carDTO.getDummy()));
     }
 
     @Test
-    void updateTmp1() {
-        tmp11.setDummy("updated");
-        Tmp1DTO tmp1DTO = new Tmp1DTO(tmp11);
-        String data = GSON.toJson(tmp1DTO);
+    void updateCar() {
+        car1.setDummy("updated");
+        CarDTO carDTO = new CarDTO(car1);
+        String data = GSON.toJson(carDTO);
 
         given()
                 .contentType("application/json")
                 .body(data)
-                .put("/tmp1/update/"+tmp11.getId()).then()
+                .put("/car/update/"+car1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(tmp11.getDummy()));
+                .body("dummy", equalTo(car1.getDummy()));
     }
 
     @Test
-    void deleteTmp1() {
+    void deleteCar() {
         given()
                 .contentType("application/json")
-                .delete("/tmp1/delete/"+tmp11.getId()).then()
+                .delete("/car/delete/"+car1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(tmp11.getDummy()));
+                .body("dummy", equalTo(car1.getDummy()));
     }
 }

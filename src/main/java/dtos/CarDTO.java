@@ -5,7 +5,7 @@
  */
 package dtos;
 
-import entities.Tmp2;
+import entities.Car;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,20 +14,20 @@ import java.util.List;
  *
  * @author tha
  */
-public class Tmp2DTO {
+public class CarDTO {
     private long id;
     String dummy;
 
-    public Tmp2DTO(Tmp2 tmp2) {
-        if(tmp2.getId() != null)
-            this.id = tmp2.getId();
-        this.dummy = tmp2.getDummy();
+    public CarDTO(Car car) {
+        if(car.getId() != null)
+            this.id = car.getId();
+        this.dummy = car.getDummy();
     }
 
-    public static List<Tmp2DTO> getDTOs(List<Tmp2> tmp2s){
-        List<Tmp2DTO> tmp2DTOs = new ArrayList();
-        tmp2s.forEach(tmp2->tmp2DTOs.add(new Tmp2DTO(tmp2)));
-        return tmp2DTOs;
+    public static List<CarDTO> getDTOs(List<Car> cars){
+        List<CarDTO> carDTOs = new ArrayList();
+        cars.forEach(car -> carDTOs.add(new CarDTO(car)));
+        return carDTOs;
     }
 
     public long getId() {

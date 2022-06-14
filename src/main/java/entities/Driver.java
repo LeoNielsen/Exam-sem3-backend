@@ -5,8 +5,8 @@ import java.io.Serializable;
 
 
 @Entity
-@NamedQuery(name = "Tmp3.deleteAllRows", query = "DELETE from Tmp3")
-public class Tmp3 implements Serializable {
+@NamedQuery(name = "driver.deleteAllRows", query = "DELETE from Driver")
+public class Driver implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -14,10 +14,10 @@ public class Tmp3 implements Serializable {
     private Long id;
     String dummy;
 
-    public Tmp3() {
+    public Driver() {
     }
 
-    public Tmp3(String dummy) {
+    public Driver(String dummy) {
         this.dummy = dummy;
     }
 

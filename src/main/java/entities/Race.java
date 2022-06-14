@@ -9,19 +9,19 @@ import javax.persistence.NamedQuery;
 
 
 @Entity
-@NamedQuery(name = "Tmp2.deleteAllRows", query = "DELETE from Tmp2")
-public class Tmp2 implements Serializable {
+@NamedQuery(name = "race.deleteAllRows", query = "DELETE from Race")
+public class Race implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     String dummy;
-
-    public Tmp2() {
+    
+    public Race() {
     }
 
-    public Tmp2(String dummy) {
+    public Race(String dummy) {
         this.dummy = dummy;
     }
 

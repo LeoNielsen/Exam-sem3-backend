@@ -5,7 +5,7 @@
  */
 package dtos;
 
-import entities.Tmp3;
+import entities.Race;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,20 +14,20 @@ import java.util.List;
  *
  * @author tha
  */
-public class Tmp3DTO {
+public class RaceDTO {
     private long id;
     String dummy;
 
-    public Tmp3DTO(Tmp3 tmp3) {
-        if(tmp3.getId() != null)
-            this.id = tmp3.getId();
-        this.dummy = tmp3.getDummy();
+    public RaceDTO(Race race) {
+        if(race.getId() != null)
+            this.id = race.getId();
+        this.dummy = race.getDummy();
     }
 
-    public static List<Tmp3DTO> getDTOs(List<Tmp3> tmp3s){
-        List<Tmp3DTO> tmp3DTOs = new ArrayList();
-        tmp3s.forEach(tmp3->tmp3DTOs.add(new Tmp3DTO(tmp3)));
-        return tmp3DTOs;
+    public static List<RaceDTO> getDTOs(List<Race> races){
+        List<RaceDTO> raceDTOS = new ArrayList();
+        races.forEach(race -> raceDTOS.add(new RaceDTO(race)));
+        return raceDTOS;
     }
 
     public long getId() {
