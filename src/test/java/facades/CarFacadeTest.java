@@ -1,6 +1,7 @@
 package facades;
 
 import dtos.CarDTO;
+import dtos.DriverDTO;
 import entities.Car;
 import entities.Driver;
 import entities.User;
@@ -30,8 +31,8 @@ public class CarFacadeTest {
 
     @BeforeAll
     public static void setUpClass() {
-       emf = EMF_Creator.createEntityManagerFactoryForTest();
-       facade = CarFacade.getCarFacade(emf);
+        emf = EMF_Creator.createEntityManagerFactoryForTest();
+        facade = CarFacade.getCarFacade(emf);
     }
 
     @AfterAll
@@ -43,16 +44,16 @@ public class CarFacadeTest {
     public void setUp() {
         EntityManager em = emf.createEntityManager();
 
-        user1 = new User("JB","test123");
-        user2 = new User("AnneW","test123");
-        user3 = new User("test","test123");
+        user1 = new User("JB", "test123");
+        user2 = new User("AnneW", "test123");
+        user3 = new User("test", "test123");
 
-        car1 = new Car("Lynet","Mercedes","Series 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
-        car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
+        car1 = new Car("Lynet", "Mercedes", "Series 3", "2018", "Rolex", "Silver", new ArrayList<>(), new ArrayList<>());
+        car2 = new Car("Bravo", "BMW", "MX3", "2020", "DC", "Black", new ArrayList<>(), new ArrayList<>());
 
-        driver1 = new Driver("James Brown","1997","amateur","male", user1, car1);
-        driver2 = new Driver("Anna West", "2001", "professional", "female",user2, car2);
-        driver3 = new Driver("test", "test", "test", "tset",user3, null);
+        driver1 = new Driver("James Brown", "1997", "amateur", "male", user1, car1);
+        driver2 = new Driver("Anna West", "2001", "professional", "female", user2, car2);
+        driver3 = new Driver("test", "test", "test", "tset", user3, null);
 
 
         car1.addDriver(driver1);
@@ -87,10 +88,19 @@ public class CarFacadeTest {
 
     @Test
     void getAll() {
-       List<CarDTO> carDTOS = facade.getAll();
+        List<CarDTO> carDTOS = facade.getAll();
 
-       assertEquals(2, carDTOS.size());
+        assertEquals(2, carDTOS.size());
     }
+
+    @Test
+    void getDrivers() {
+        List<DriverDTO> driverDTOS = facade.getDrivers(car1.getId());
+
+        assertEquals(1, driverDTOS.size());
+        assertEquals(driver1.getName(), driverDTOS.get(0).getName());
+    }
+
 
     @Test
     void getCarById() {
@@ -101,7 +111,7 @@ public class CarFacadeTest {
 
     @Test
     void createCar() {
-        car3 = new Car("test","test","test","test","test","test",new ArrayList<>(), new ArrayList<>());
+        car3 = new Car("test", "test", "test", "test", "test", "test", new ArrayList<>(), new ArrayList<>());
 
         CarDTO carDTO = facade.createCar(new CarDTO(car3));
         List<CarDTO> carDTOS = facade.getAll();
@@ -117,7 +127,7 @@ public class CarFacadeTest {
 
         car1.setName("updated");
         car1.setDrivers(drivers);
-        CarDTO carDTO = facade.updateCar(car1.getId(),new CarDTO(car1));
+        CarDTO carDTO = facade.updateCar(car1.getId(), new CarDTO(car1));
         List<CarDTO> carDTOS = facade.getAll();
 
         assertEquals("updated", carDTO.getName());
@@ -133,4 +143,5 @@ public class CarFacadeTest {
         assertEquals("Lynet", carDTO.getName());
         assertEquals(1, carDTOS.size());
     }
+
 }

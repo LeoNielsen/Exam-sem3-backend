@@ -2,6 +2,7 @@ package facades;
 
 
 import dtos.CarDTO;
+import dtos.DriverDTO;
 import entities.Car;
 import entities.Driver;
 import entities.Race;
@@ -45,6 +46,17 @@ public class CarFacade {
             TypedQuery<Car> query = em.createQuery("SELECT car FROM Car car", Car.class);
             List<Car> cars = query.getResultList();
             return CarDTO.getDTOs(cars);
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<DriverDTO> getDrivers(long id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            Car car = em.find(Car.class, id);
+            List<Driver> drivers = new ArrayList<>(car.getDrivers());
+            return DriverDTO.getDTOs(drivers);
         } finally {
             em.close();
         }
@@ -137,4 +149,6 @@ public class CarFacade {
             em.close();
         }
     }
+
+
 }

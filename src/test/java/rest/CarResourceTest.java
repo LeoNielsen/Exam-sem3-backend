@@ -163,6 +163,16 @@ public class CarResourceTest {
     }
 
     @Test
+    void getDrivers() {
+        given()
+                .contentType("application/json")
+                .get("/car/getdrivers/"+car1.getId()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("name", hasItems(driver1.getName()));
+    }
+
+    @Test
     void getCarById() {
         login("test", "test123");
         given()
@@ -221,6 +231,4 @@ public class CarResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo(car1.getName()));
     }
-
-
 }

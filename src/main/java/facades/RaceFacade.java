@@ -52,11 +52,8 @@ public class RaceFacade {
     public List<CarDTO> getCars(long id) {
         EntityManager em = emf.createEntityManager();
         try {
-            List<Car> carList = new ArrayList<>();
             Race race = em.find(Race.class, id);
-            for (Car car : race.getCars()) {
-                carList.add(car);
-            }
+            List<Car> carList = new ArrayList<>(race.getCars());
             return CarDTO.getDTOs(carList);
         } finally {
             em.close();

@@ -3,6 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.CarDTO;
+import dtos.DriverDTO;
 import facades.CarFacade;
 import utils.EMF_Creator;
 
@@ -32,6 +33,14 @@ public class CarResource {
     public String getAll() {
         List<CarDTO> carDTOS = FACADE.getAll();
         return GSON.toJson(carDTOS);
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("/getdrivers/{id}")
+    public String getDrivers(@PathParam("id") long id) {
+        List<DriverDTO> driverDTOS = FACADE.getDrivers(id);
+        return GSON.toJson(driverDTOS);
     }
 
     @GET
