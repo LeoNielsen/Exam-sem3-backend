@@ -78,10 +78,12 @@ public class CarFacade {
         try {
             Car car = new Car(carDTO.getName(), carDTO.getBrand(), carDTO.getMake(), carDTO.getYear(), carDTO.getSponsor(), carDTO.getColor(), new ArrayList<>(), new ArrayList<>());
 
-            for (Long driverId: carDTO.getDriversIds()) {
-                Driver driver = em.find(Driver.class, driverId);
-                driver.setCar(car);
-                car.addDriver(driver);
+            if (carDTO.getDriversIds() != null) {
+                for (Long driverId : carDTO.getDriversIds()) {
+                    Driver driver = em.find(Driver.class, driverId);
+                    driver.setCar(car);
+                    car.addDriver(driver);
+                }
             }
 
             em.getTransaction().begin();

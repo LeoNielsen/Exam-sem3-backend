@@ -78,11 +78,13 @@ public class RaceFacade {
 
         try {
             em.getTransaction().begin();
-            for (long carId : raceDTO.getCarsId()) {
-                Car car = em.find(Car.class, carId);
-                car.addRace(race);
-                race.addCar(car);
-                em.merge(car);
+            if (raceDTO.getCarsId() != null) {
+                for (long carId : raceDTO.getCarsId()) {
+                    Car car = em.find(Car.class, carId);
+                    car.addRace(race);
+                    race.addCar(car);
+                    em.merge(car);
+                }
             }
             em.persist(race);
             em.getTransaction().commit();
@@ -112,7 +114,7 @@ public class RaceFacade {
 
             race.setCars(new ArrayList<>());
 
-            for (Long carId: raceDTO.getCarsId()) {
+            for (Long carId : raceDTO.getCarsId()) {
                 Car car = em.find(Car.class, carId);
                 car.addRace(race);
                 race.addCar(car);
