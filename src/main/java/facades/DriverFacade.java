@@ -2,6 +2,7 @@ package facades;
 
 import dtos.DriverDTO;
 import entities.Driver;
+import entities.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -12,17 +13,17 @@ import java.util.List;
 
 
 /**
- *
  * Rename Class to a relevant name Add relevant facade methods
  */
 public class DriverFacade {
 
     private static DriverFacade instance;
     private static EntityManagerFactory emf;
-    
+
     //Private Constructor to ensure Singleton
-    private DriverFacade() {}
-    
+    private DriverFacade() {
+    }
+
     public static DriverFacade getDriverFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
@@ -34,8 +35,8 @@ public class DriverFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    
-    public List<DriverDTO> getAll(){
+
+    public List<DriverDTO> getAll() {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Driver> query = em.createQuery("SELECT driver FROM Driver driver", Driver.class);
@@ -58,9 +59,12 @@ public class DriverFacade {
 
     public DriverDTO createDriver(DriverDTO driverDTO) {
         EntityManager em = emf.createEntityManager();
-        Driver driver = new Driver(driverDTO.getDummy());
-
         try {
+
+            User user = em.find(User.class, driverDTO.getUser());
+            Driver driver = new Driver(driverDTO.getName(), driverDTO.getBirthYear(), driverDTO.getExperience(), driverDTO.getGender(), user);
+
+
             em.getTransaction().begin();
             em.persist(driver);
             em.getTransaction().commit();
@@ -68,6 +72,7 @@ public class DriverFacade {
         } finally {
             em.close();
         }
+
     }
 
     public DriverDTO updateDriver(long id, DriverDTO driverDTO) {
@@ -75,7 +80,10 @@ public class DriverFacade {
         try {
             Driver driver = em.find(Driver.class, id);
             driver.setId(id);
-            driver.setDummy(driverDTO.getDummy());
+            driver.setName(driverDTO.getName());
+            driver.setBirthYear(driverDTO.getBirthYear());
+            driver.setExperience(driverDTO.getExperience());
+            driver.setGender(driverDTO.getGender());
 
             em.getTransaction().begin();
             em.merge(driver);

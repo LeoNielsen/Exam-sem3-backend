@@ -6,7 +6,9 @@
 package dtos;
 
 import entities.Driver;
+import entities.User;
 
+import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +18,20 @@ import java.util.List;
  */
 public class DriverDTO {
     private long id;
-    String dummy;
+    String name;
+    String birthYear;
+    String experience;
+    String gender;
+    String user;
 
     public DriverDTO(Driver driver) {
         if(driver.getId() != null)
             this.id = driver.getId();
-        this.dummy = driver.getDummy();
+        this.name = driver.getName();
+        this.birthYear = driver.getBirthYear();
+        this.experience = driver.getExperience();
+        this.gender = driver.getGender();
+        this.user = driver.getUser().getUserName();
     }
 
     public static List<DriverDTO> getDTOs(List<Driver> drivers){
@@ -34,7 +44,23 @@ public class DriverDTO {
         return id;
     }
 
-    public String getDummy() {
-        return dummy;
+    public String getName() {
+        return name;
+    }
+
+    public String getBirthYear() {
+        return birthYear;
+    }
+
+    public String getExperience() {
+        return experience;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getUser() {
+        return user;
     }
 }

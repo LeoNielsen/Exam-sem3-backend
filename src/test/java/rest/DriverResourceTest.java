@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.DriverDTO;
 import entities.Driver;
+import entities.User;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -32,6 +33,7 @@ public class DriverResourceTest {
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     private static Driver driver1, driver2;
+    private static User user1, user2, user3;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -69,11 +71,20 @@ public class DriverResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        driver1 = new Driver("1");
-        driver2 = new Driver("2");
+        user1 = new User("JB", "test123");
+        user2 = new User("AnneW", "test123");
+        user3 = new User("test", "test123");
+
+        driver1 = new Driver("James Brown", "1997", "amateur", "male", user1);
+        driver2 = new Driver("Anna West", "2001", "professional", "female", user2);
+
         try {
             em.getTransaction().begin();
             em.createNamedQuery("driver.deleteAllRows").executeUpdate();
+            em.createNamedQuery("user.deleteAllRows").executeUpdate();
+            em.persist(user1);
+            em.persist(user2);
+            em.persist(user3);
             em.persist(driver1);
             em.persist(driver2);
             em.getTransaction().commit();
@@ -106,22 +117,22 @@ public class DriverResourceTest {
                 .get("/driver/all").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", hasItems("1","2"));
+                .body("name", hasItems(driver1.getName(), driver2.getName()));
     }
 
     @Test
     void getDriverById() {
         given()
                 .contentType("application/json")
-                .get("/driver/"+driver2.getId()).then()
+                .get("/driver/" + driver2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(driver2.getDummy()));
+                .body("name", equalTo(driver2.getName()));
     }
 
     @Test
     void createDriver() {
-        DriverDTO driverDTO = new DriverDTO(new Driver("test"));
+        DriverDTO driverDTO = new DriverDTO(new Driver("test","test","test","test",user3));
         String data = GSON.toJson(driverDTO);
 
         given()
@@ -130,31 +141,31 @@ public class DriverResourceTest {
                 .post("/driver/create").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(driverDTO.getDummy()));
+                .body("name", equalTo(driverDTO.getName()));
     }
 
     @Test
     void updateDriver() {
-        driver1.setDummy("updated");
+        driver1.setName("updated");
         DriverDTO driverDTO = new DriverDTO(driver1);
         String data = GSON.toJson(driverDTO);
 
         given()
                 .contentType("application/json")
                 .body(data)
-                .put("/driver/update/"+driver1.getId()).then()
+                .put("/driver/update/" + driver1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(driver1.getDummy()));
+                .body("name", equalTo(driver1.getName()));
     }
 
     @Test
     void deleteDriver() {
         given()
                 .contentType("application/json")
-                .delete("/driver/delete/"+driver1.getId()).then()
+                .delete("/driver/delete/" + driver1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(driver1.getDummy()));
+                .body("name", equalTo(driver1.getName()));
     }
 }

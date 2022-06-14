@@ -2,6 +2,7 @@ package facades;
 
 import dtos.DriverDTO;
 import entities.Driver;
+import entities.User;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
@@ -19,6 +20,8 @@ public class DriverFacadeTest {
     private static DriverFacade facade;
 
     private static Driver driver1, driver2;
+    private static User user1, user2, user3;
+
 
     public DriverFacadeTest() {
     }
@@ -38,12 +41,20 @@ public class DriverFacadeTest {
     public void setUp() {
         EntityManager em = emf.createEntityManager();
 
-        driver1 = new Driver("1");
-        driver2 = new Driver("2");
+        user1 = new User("JB","test123");
+        user2 = new User("AnneW","test123");
+        user3 = new User("test","test123");
+
+        driver1 = new Driver("James Brown","1997","amateur","male", user1);
+        driver2 = new Driver("Anna West", "2001", "professional", "female", user2);
 
         try {
             em.getTransaction().begin();
             em.createNamedQuery("driver.deleteAllRows").executeUpdate();
+            em.createNamedQuery("user.deleteAllRows").executeUpdate();
+            em.persist(user1);
+            em.persist(user2);
+            em.persist(user3);
             em.persist(driver1);
             em.persist(driver2);
 
@@ -70,26 +81,26 @@ public class DriverFacadeTest {
     void getDriverById() {
         DriverDTO driverDTO = facade.getDriverById(driver2.getId());
 
-        assertEquals("2", driverDTO.getDummy());
+        assertEquals("Anna West", driverDTO.getName());
     }
 
     @Test
     void createDriver() {
-        Driver driver = new Driver("test");
+        Driver driver = new Driver("test","test","test","test",user3);
         DriverDTO driverDTO = facade.createDriver(new DriverDTO(driver));
         List<DriverDTO> driverDTOS = facade.getAll();
 
-        assertEquals("test", driverDTO.getDummy());
+        assertEquals("test", driverDTO.getName());
         assertEquals(3, driverDTOS.size());
     }
 
     @Test
     void updateDriver() {
-        driver1.setDummy("updated");
+        driver1.setName("updated");
         DriverDTO driverDTO = facade.updateDriver(driver1.getId(),new DriverDTO(driver1));
         List<DriverDTO> driverDTOS = facade.getAll();
 
-        assertEquals("updated", driverDTO.getDummy());
+        assertEquals("updated", driverDTO.getName());
         assertEquals(2, driverDTOS.size());
     }
 
@@ -98,7 +109,7 @@ public class DriverFacadeTest {
         DriverDTO driverDTO = facade.deleteDriver(driver1.getId());
         List<DriverDTO> driverDTOS = facade.getAll();
 
-        assertEquals("1", driverDTO.getDummy());
+        assertEquals("James Brown", driverDTO.getName());
         assertEquals(1, driverDTOS.size());
     }
 }

@@ -12,13 +12,23 @@ public class Driver implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    String dummy;
+    String name;
+    String birthYear;
+    String experience;
+    String gender;
+
+    @OneToOne
+    User user;
 
     public Driver() {
     }
 
-    public Driver(String dummy) {
-        this.dummy = dummy;
+    public Driver(String name, String birthYear, String experience, String gender, User user) {
+        this.name = name;
+        this.birthYear = birthYear;
+        this.experience = experience;
+        this.gender = gender;
+        this.user = user;
     }
 
     public Long getId() {
@@ -29,13 +39,43 @@ public class Driver implements Serializable {
         this.id = id;
     }
 
-    public String getDummy() {
-        return dummy;
+    public String getName() {
+        return name;
     }
 
-    public void setDummy(String dummy) {
-        this.dummy = dummy;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    
+    public String getBirthYear() {
+        return birthYear;
+    }
+
+    public void setBirthYear(String birthYear) {
+        this.birthYear = birthYear;
+    }
+
+    public String getExperience() {
+        return experience;
+    }
+
+    public void setExperience(String experience) {
+        this.experience = experience;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
