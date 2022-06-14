@@ -6,15 +6,18 @@ import dtos.RaceDTO;
 import entities.*;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 import io.restassured.parsing.Parser;
+
 import java.net.URI;
 import java.util.ArrayList;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
+
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -87,9 +90,9 @@ public class RaceResourceTest {
     public void setUp() {
         EntityManager em = emf.createEntityManager();
 
-        user1 = new User("JB","test123");
-        user2 = new User("AnneW","test123");
-        user3 = new User("test","test123");
+        user1 = new User("JB", "test123");
+        user2 = new User("AnneW", "test123");
+        user3 = new User("test", "test123");
 
         Role userRole = new Role("user");
         Role adminRole = new Role("admin");
@@ -97,13 +100,13 @@ public class RaceResourceTest {
         user3.addRole(adminRole);
         user3.addRole(userRole);
 
-        car1 = new Car("Lynet","Mercedes","Series 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
-        car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
-        car3 = new Car("test","test","test","test","test","test",new ArrayList<>(), new ArrayList<>());
+        car1 = new Car("Lynet", "Mercedes", "Series 3", "2018", "Rolex", "Silver", new ArrayList<>(), new ArrayList<>());
+        car2 = new Car("Bravo", "BMW", "MX3", "2020", "DC", "Black", new ArrayList<>(), new ArrayList<>());
+        car3 = new Car("test", "test", "test", "test", "test", "test", new ArrayList<>(), new ArrayList<>());
 
-        driver1 = new Driver("James Brown","1997","amateur","male", user1, car1);
-        driver2 = new Driver("Anna West", "2001", "professional", "female",user2, car2);
-        driver3 = new Driver("test", "test", "test", "tset",user3, car3);
+        driver1 = new Driver("James Brown", "1997", "amateur", "male", user1, car1);
+        driver2 = new Driver("Anna West", "2001", "professional", "female", user2, car2);
+        driver3 = new Driver("test", "test", "test", "tset", user3, car3);
 
         race1 = new Race("Nas", "Miami", "27-06-22", "210", new ArrayList<>());
         race2 = new Race("Le Mans", "Nice", "17-08-22", "210", new ArrayList<>());
@@ -191,7 +194,7 @@ public class RaceResourceTest {
         given()
                 .contentType("application/json")
                 .header("x-access-token", securityToken)
-                .get("/race/"+race2.getId()).then()
+                .get("/race/" + race2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo(race2.getName()));
@@ -201,7 +204,7 @@ public class RaceResourceTest {
     void createRace() {
         login("test", "test123");
 
-        race3 = new Race("test","test","test","test",new ArrayList<>());
+        race3 = new Race("test", "test", "test", "test", new ArrayList<>());
         race3.addCar(car3);
         race3.addCar(car2);
         race3.addCar(car1);
@@ -216,7 +219,7 @@ public class RaceResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo(raceDTO.getName()))
-                .body("carsId", hasItems(Integer.valueOf(String.valueOf(car2.getId())),Integer.valueOf(String.valueOf(car3.getId()))));
+                .body("carsId", hasItems(Integer.valueOf(String.valueOf(car2.getId())), Integer.valueOf(String.valueOf(car3.getId()))));
     }
 
     @Test
@@ -224,6 +227,8 @@ public class RaceResourceTest {
         login("test", "test123");
 
         race1.setName("updated");
+        race1.addCar(car3);
+        race1.removeCar(car2);
         RaceDTO raceDTO = new RaceDTO(race1);
         String data = GSON.toJson(raceDTO);
 
@@ -231,10 +236,11 @@ public class RaceResourceTest {
                 .contentType("application/json")
                 .header("x-access-token", securityToken)
                 .body(data)
-                .put("/race/update/"+race1.getId()).then()
+                .put("/race/update/" + race1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo(race1.getName()));
+                .body("name", equalTo(race1.getName()))
+                .body("carsId", hasItems(Integer.valueOf(String.valueOf(car1.getId())), Integer.valueOf(String.valueOf(car3.getId()))));
     }
 
     @Test
@@ -244,7 +250,7 @@ public class RaceResourceTest {
         given()
                 .contentType("application/json")
                 .header("x-access-token", securityToken)
-                .delete("/race/delete/"+race1.getId()).then()
+                .delete("/race/delete/" + race1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo(race1.getName()));

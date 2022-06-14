@@ -3,6 +3,7 @@ package facades;
 import dtos.CarDTO;
 import dtos.RaceDTO;
 import entities.Car;
+import entities.Driver;
 import entities.Race;
 
 import java.util.ArrayList;
@@ -97,8 +98,27 @@ public class RaceFacade {
             Race race = em.find(Race.class, id);
             race.setId(id);
             race.setName(raceDTO.getName());
+            race.setLocation(raceDTO.getLocation());
+            race.setStartDate(raceDTO.getStartDate());
+            race.setDuration(raceDTO.getDuration());
+            race.setName(raceDTO.getName());
 
             em.getTransaction().begin();
+
+            for (Car car : race.getCars()) {
+                car.removeRace(race);
+                em.merge(car);
+            }
+
+            race.setCars(new ArrayList<>());
+
+            for (Long carId: raceDTO.getCarsId()) {
+                Car car = em.find(Car.class, carId);
+                car.addRace(race);
+                race.addCar(car);
+                em.merge(car);
+            }
+
             em.merge(race);
             em.getTransaction().commit();
             return new RaceDTO(race);

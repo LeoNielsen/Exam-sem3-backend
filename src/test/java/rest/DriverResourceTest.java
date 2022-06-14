@@ -200,6 +200,7 @@ public class DriverResourceTest {
         login("test", "test123");
 
         driver1.setName("updated");
+        driver1.setCar(car2);
         DriverDTO driverDTO = new DriverDTO(driver1);
         String data = GSON.toJson(driverDTO);
 

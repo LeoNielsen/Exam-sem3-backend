@@ -90,7 +90,13 @@ public class DriverFacade {
             driver.setExperience(driverDTO.getExperience());
             driver.setGender(driverDTO.getGender());
 
+            Car car = em.find(Car.class,driverDTO.getCarId());
+
+            driver.setCar(car);
+            car.addDriver(driver);
+
             em.getTransaction().begin();
+            em.merge(car);
             em.merge(driver);
             em.getTransaction().commit();
             return new DriverDTO(driver);
