@@ -142,7 +142,7 @@ public class DriverFacadeTest {
 
     @Test
     void getRacesByDriver() {
-        List<RaceDTO> raceDTOS = facade.getRacesByDriver(driver1.getId());
+        List<RaceDTO> raceDTOS = facade.getRacesByDriver(user1.getUserName());
 
         assertEquals(race1.getName(), raceDTOS.get(0).getName());
     }

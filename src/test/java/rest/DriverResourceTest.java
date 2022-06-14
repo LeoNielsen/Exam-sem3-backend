@@ -236,7 +236,7 @@ public class DriverResourceTest {
         given()
                 .contentType("application/json")
                 .header("x-access-token", securityToken)
-                .get("/driver/races/" + driver1.getId()).then()
+                .get("/driver/races/" + user1.getUserName()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", hasItem(race1.getName()));

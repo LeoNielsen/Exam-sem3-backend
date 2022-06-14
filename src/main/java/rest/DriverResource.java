@@ -48,7 +48,7 @@ public class DriverResource {
     @Produces({MediaType.APPLICATION_JSON})
     @RolesAllowed({"user"})
     @Path("/races/{id}/")
-    public String getRacesByDriver(@PathParam("id") long id) {
+    public String getRacesByDriver(@PathParam("id") String id) {
         List<RaceDTO> raceDTOs = FACADE.getRacesByDriver(id);
         return GSON.toJson(raceDTOs);
     }

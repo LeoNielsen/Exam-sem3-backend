@@ -123,10 +123,12 @@ public class DriverFacade {
         }
     }
 
-    public List<RaceDTO> getRacesByDriver(long id) {
+    public List<RaceDTO> getRacesByDriver(String id) {
         EntityManager em = emf.createEntityManager();
         try {
-            Driver driver = em.find(Driver.class, id);
+            TypedQuery<Driver> query = em.createQuery("SELECT d FROM Driver d WHERE d.user.userName = :id", Driver.class);
+            query.setParameter("id", id);
+            Driver driver = query.getSingleResult();
             List<Race> races = new ArrayList<>(driver.getCar().getRaces());
             return RaceDTO.getDTOs(races);
         } finally {
