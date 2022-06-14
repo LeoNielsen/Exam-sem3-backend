@@ -175,6 +175,16 @@ public class RaceResourceTest {
     }
 
     @Test
+    void getCars() {
+        given()
+                .contentType("application/json")
+                .get("/race/getcars/" + race1.getId()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("name", hasItems(car1.getName(), car2.getName()));
+    }
+
+    @Test
     void getRaceById() {
         login("test", "test123");
 
@@ -237,4 +247,6 @@ public class RaceResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", equalTo(race1.getName()));
     }
+
+
 }

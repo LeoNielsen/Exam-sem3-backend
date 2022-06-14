@@ -1,5 +1,6 @@
 package facades;
 
+import dtos.CarDTO;
 import dtos.RaceDTO;
 import entities.Car;
 import entities.Driver;
@@ -106,6 +107,13 @@ public class RaceFacadeTest {
        List<RaceDTO> raceDTOS = facade.getAll();
 
        assertEquals(2, raceDTOS.size());
+    }
+
+    @Test
+    void getCars() {
+        List<CarDTO> carDTOS = facade.getCars(race1.getId());
+
+        assertEquals(2, carDTOS.size());
     }
 
     @Test

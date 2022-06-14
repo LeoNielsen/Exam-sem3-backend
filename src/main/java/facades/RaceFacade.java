@@ -1,5 +1,6 @@
 package facades;
 
+import dtos.CarDTO;
 import dtos.RaceDTO;
 import entities.Car;
 import entities.Race;
@@ -48,6 +49,20 @@ public class RaceFacade {
         }
     }
 
+    public List<CarDTO> getCars(long id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Car> carList = new ArrayList<>();
+            Race race = em.find(Race.class, id);
+            for (Car car : race.getCars()) {
+                carList.add(car);
+            }
+            return CarDTO.getDTOs(carList);
+        } finally {
+            em.close();
+        }
+    }
+
     public RaceDTO getRaceById(long id) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -60,8 +75,6 @@ public class RaceFacade {
 
     public RaceDTO createRace(RaceDTO raceDTO) {
         EntityManager em = emf.createEntityManager();
-
-
 
         Race race = new Race(raceDTO.getName(), raceDTO.getLocation(), raceDTO.getStartDate(), raceDTO.getDuration(), new ArrayList<>());
 

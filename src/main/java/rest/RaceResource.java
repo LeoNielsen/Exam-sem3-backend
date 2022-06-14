@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.CarDTO;
 import dtos.RaceDTO;
 import utils.EMF_Creator;
 import facades.RaceFacade;
@@ -32,6 +33,14 @@ public class RaceResource {
     public String getAll() {
         List<RaceDTO> raceDTOS = FACADE.getAll();
         return GSON.toJson(raceDTOS);
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("/getcars/{id}")
+    public String getCars(@PathParam("id") long id) {
+        List<CarDTO> carDTOS = FACADE.getCars(id);
+        return GSON.toJson(carDTOS);
     }
 
     @GET

@@ -4,6 +4,7 @@ package facades;
 import dtos.CarDTO;
 import entities.Car;
 import entities.Driver;
+import entities.Race;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
