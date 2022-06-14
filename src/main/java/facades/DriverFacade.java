@@ -1,6 +1,7 @@
 package facades;
 
 import dtos.DriverDTO;
+import entities.Car;
 import entities.Driver;
 import entities.User;
 
@@ -60,10 +61,14 @@ public class DriverFacade {
     public DriverDTO createDriver(DriverDTO driverDTO) {
         EntityManager em = emf.createEntityManager();
         try {
+            Car car = null;
 
             User user = em.find(User.class, driverDTO.getUser());
-            Driver driver = new Driver(driverDTO.getName(), driverDTO.getBirthYear(), driverDTO.getExperience(), driverDTO.getGender(), user);
 
+            if (driverDTO.getCarId() != null)
+                car = em.find(Car.class, driverDTO.getCarId());
+
+            Driver driver = new Driver(driverDTO.getName(), driverDTO.getBirthYear(), driverDTO.getExperience(), driverDTO.getGender(), user, car);
 
             em.getTransaction().begin();
             em.persist(driver);

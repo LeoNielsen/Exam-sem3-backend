@@ -3,6 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.DriverDTO;
+import entities.Car;
 import entities.Driver;
 import entities.User;
 import io.restassured.RestAssured;
@@ -21,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.ArrayList;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -34,6 +36,7 @@ public class DriverResourceTest {
     private static final String SERVER_URL = "http://localhost/api";
     private static Driver driver1, driver2;
     private static User user1, user2, user3;
+    private static Car car1, car2, car3;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -71,22 +74,37 @@ public class DriverResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        user1 = new User("JB", "test123");
-        user2 = new User("AnneW", "test123");
-        user3 = new User("test", "test123");
 
-        driver1 = new Driver("James Brown", "1997", "amateur", "male", user1);
-        driver2 = new Driver("Anna West", "2001", "professional", "female", user2);
+        user1 = new User("JB","test123");
+        user2 = new User("AnneW","test123");
+        user3 = new User("test","test123");
+
+        car1 = new Car("Lynet","Merceds","Serie 3","2018","Rolex","Silver",new ArrayList<>());
+        car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>());
+        car3 = new Car("test","test","test","test","test","test",new ArrayList<>());
+
+
+        driver1 = new Driver("James Brown","1997","amateur","male", user1, null);
+        driver2 = new Driver("Anna West", "2001", "professional", "female",user2, null);
+
+        car1.addDriver(driver1);
+        car2.addDriver(driver2);
+        driver1.setCar(car1);
+        driver2.setCar(car2);
 
         try {
             em.getTransaction().begin();
             em.createNamedQuery("driver.deleteAllRows").executeUpdate();
             em.createNamedQuery("user.deleteAllRows").executeUpdate();
+            em.createNamedQuery("car.deleteAllRows").executeUpdate();
             em.persist(user1);
             em.persist(user2);
             em.persist(user3);
             em.persist(driver1);
             em.persist(driver2);
+            em.persist(car1);
+            em.persist(car2);
+            em.persist(car3);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -132,7 +150,7 @@ public class DriverResourceTest {
 
     @Test
     void createDriver() {
-        DriverDTO driverDTO = new DriverDTO(new Driver("test","test","test","test",user3));
+        DriverDTO driverDTO = new DriverDTO(new Driver("test","test","test","test",user3,car3));
         String data = GSON.toJson(driverDTO);
 
         given()
@@ -141,7 +159,8 @@ public class DriverResourceTest {
                 .post("/driver/create").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo(driverDTO.getName()));
+                .body("name", equalTo(driverDTO.getName()))
+                .body("carId", equalTo(Integer.valueOf(String.valueOf(car3.getId()))));
     }
 
     @Test

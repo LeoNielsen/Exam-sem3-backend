@@ -6,7 +6,10 @@
 package dtos;
 
 import entities.Car;
+import entities.Driver;
+import entities.Role;
 
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +19,24 @@ import java.util.List;
  */
 public class CarDTO {
     private long id;
-    String dummy;
+    String name;
+    String brand;
+    String make;
+    String year;
+    String sponsor;
+    String color;
+    List<Long> driversIds = new ArrayList<>();
 
     public CarDTO(Car car) {
         if(car.getId() != null)
             this.id = car.getId();
-        this.dummy = car.getDummy();
+        this.name = car.getName();
+        this.brand = car.getBrand();
+        this.make = car.getMake();
+        this.year = car.getYear();
+        this.sponsor = car.getSponsor();
+        this.color = car.getColor();
+        this.driversIds = getDrivers(car.getDrivers());
     }
 
     public static List<CarDTO> getDTOs(List<Car> cars){
@@ -30,11 +45,44 @@ public class CarDTO {
         return carDTOs;
     }
 
+    private List<Long> getDrivers(List<Driver> drivers){
+        List<Long> driverIds = new ArrayList<>();
+        for (Driver driver : drivers)
+        {
+            driverIds.add(driver.getId());
+        }
+        return driverIds;
+    }
+
     public long getId() {
         return id;
     }
 
-    public String getDummy() {
-        return dummy;
+    public String getName() {
+        return name;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public String getMake() {
+        return make;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public String getSponsor() {
+        return sponsor;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public List<Long> getDriversIds() {
+        return driversIds;
     }
 }

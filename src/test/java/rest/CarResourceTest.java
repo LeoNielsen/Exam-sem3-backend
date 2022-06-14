@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.CarDTO;
 import entities.Car;
+import entities.Driver;
+import entities.User;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -20,10 +22,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.ArrayList;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.*;
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
 
@@ -31,7 +33,9 @@ public class CarResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
-    private static Car car1, car2;
+    private static Driver driver1, driver2, driver3;
+    private static User user1, user2, user3;
+    private static Car car1, car2, car3;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -69,11 +73,33 @@ public class CarResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        car1 = new Car("1");
-        car2 = new Car("2");
+
+        user1 = new User("JB","test123");
+        user2 = new User("AnneW","test123");
+        user3 = new User("test","test123");
+
+        car1 = new Car("Lynet","Merceds","Serie 3","2018","Rolex","Silver",new ArrayList<>());
+        car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>());
+
+        driver1 = new Driver("James Brown","1997","amateur","male", user1, car1);
+        driver2 = new Driver("Anna West", "2001", "professional", "female",user2, car2);
+        driver3 = new Driver("test", "test", "test", "tset",user3, null);
+
+
+        car1.addDriver(driver1);
+        car2.addDriver(driver2);
+
         try {
             em.getTransaction().begin();
+            em.createNamedQuery("driver.deleteAllRows").executeUpdate();
+            em.createNamedQuery("user.deleteAllRows").executeUpdate();
             em.createNamedQuery("car.deleteAllRows").executeUpdate();
+            em.persist(user1);
+            em.persist(user2);
+            em.persist(user3);
+            em.persist(driver1);
+            em.persist(driver2);
+            em.persist(driver3);
             em.persist(car1);
             em.persist(car2);
             em.getTransaction().commit();
@@ -106,7 +132,7 @@ public class CarResourceTest {
                 .get("/car/all").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", hasItems("1","2"));
+                .body("name", hasItems(car1.getName(),car2.getName()));
     }
 
     @Test
@@ -116,12 +142,14 @@ public class CarResourceTest {
                 .get("/car/"+car2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(car2.getDummy()));
+                .body("name", equalTo(car2.getName()));
     }
 
     @Test
     void createCar() {
-        CarDTO carDTO = new CarDTO(new Car("test"));
+        car3 = new Car("test","test","test","test","test","test", new ArrayList<>());
+        car3.addDriver(driver3);
+        CarDTO carDTO = new CarDTO(car3);
         String data = GSON.toJson(carDTO);
 
         given()
@@ -130,12 +158,13 @@ public class CarResourceTest {
                 .post("/car/create").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(carDTO.getDummy()));
+                .body("name", equalTo(carDTO.getName()))
+                .body("driversIds", hasItem(Integer.valueOf(String.valueOf(driver3.getId()))));
     }
 
     @Test
     void updateCar() {
-        car1.setDummy("updated");
+        car1.setName("updated");
         CarDTO carDTO = new CarDTO(car1);
         String data = GSON.toJson(carDTO);
 
@@ -145,7 +174,7 @@ public class CarResourceTest {
                 .put("/car/update/"+car1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(car1.getDummy()));
+                .body("name", equalTo(car1.getName()));
     }
 
     @Test
@@ -155,6 +184,6 @@ public class CarResourceTest {
                 .delete("/car/delete/"+car1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(car1.getDummy()));
+                .body("name", equalTo(car1.getName()));
     }
 }

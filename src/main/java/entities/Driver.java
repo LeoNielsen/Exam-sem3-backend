@@ -20,15 +20,19 @@ public class Driver implements Serializable {
     @OneToOne
     User user;
 
+    @ManyToOne
+    Car car;
+
     public Driver() {
     }
 
-    public Driver(String name, String birthYear, String experience, String gender, User user) {
+    public Driver(String name, String birthYear, String experience, String gender, User user, Car car) {
         this.name = name;
         this.birthYear = birthYear;
         this.experience = experience;
         this.gender = gender;
         this.user = user;
+        this.car = car;
     }
 
     public Long getId() {
@@ -77,5 +81,13 @@ public class Driver implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
     }
 }

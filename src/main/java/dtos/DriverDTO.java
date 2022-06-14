@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author tha
  */
 public class DriverDTO {
@@ -23,18 +22,21 @@ public class DriverDTO {
     String experience;
     String gender;
     String user;
+    Long carId;
 
     public DriverDTO(Driver driver) {
-        if(driver.getId() != null)
+        if (driver.getId() != null)
             this.id = driver.getId();
         this.name = driver.getName();
         this.birthYear = driver.getBirthYear();
         this.experience = driver.getExperience();
         this.gender = driver.getGender();
         this.user = driver.getUser().getUserName();
+        if (driver.getCar() != null)
+            this.carId = driver.getCar().getId();
     }
 
-    public static List<DriverDTO> getDTOs(List<Driver> drivers){
+    public static List<DriverDTO> getDTOs(List<Driver> drivers) {
         List<DriverDTO> driverDTOS = new ArrayList();
         drivers.forEach(driver -> driverDTOS.add(new DriverDTO(driver)));
         return driverDTOS;
@@ -62,5 +64,9 @@ public class DriverDTO {
 
     public String getUser() {
         return user;
+    }
+
+    public Long getCarId() {
+        return carId;
     }
 }

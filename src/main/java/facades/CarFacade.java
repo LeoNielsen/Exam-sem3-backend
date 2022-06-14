@@ -3,10 +3,12 @@ package facades;
 
 import dtos.CarDTO;
 import entities.Car;
+import entities.Driver;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 //import error handling.RenameMeNotFoundException;
@@ -59,9 +61,16 @@ public class CarFacade {
 
     public CarDTO createCar(CarDTO carDTO) {
         EntityManager em = emf.createEntityManager();
-        Car car = new Car(carDTO.getDummy());
 
         try {
+            Car car = new Car(carDTO.getName(), carDTO.getBrand(), carDTO.getMake(), carDTO.getYear(), carDTO.getSponsor(), carDTO.getColor(), new ArrayList<>());
+
+            for (Long driverId: carDTO.getDriversIds()) {
+                Driver driver = em.find(Driver.class, driverId);
+                driver.setCar(car);
+                car.addDriver(driver);
+            }
+
             em.getTransaction().begin();
             em.persist(car);
             em.getTransaction().commit();
@@ -76,9 +85,30 @@ public class CarFacade {
         try {
             Car car = em.find(Car.class, id);
             car.setId(id);
-            car.setDummy(carDTO.getDummy());
+            car.setName(carDTO.getName());
+            car.setBrand(carDTO.getBrand());
+            car.setMake(carDTO.getMake());
+            car.setYear(carDTO.getYear());
+            car.setSponsor(carDTO.getSponsor());
+            car.setColor(carDTO.getColor());
+
 
             em.getTransaction().begin();
+
+            for (Driver driver : car.getDrivers()) {
+                driver.setCar(null);
+                em.merge(driver);
+            }
+
+            car.setDrivers(new ArrayList<>());
+
+            for (Long driverId: carDTO.getDriversIds()) {
+                Driver driver = em.find(Driver.class, driverId);
+                driver.setCar(car);
+                car.addDriver(driver);
+                em.merge(driver);
+            }
+
             em.merge(car);
             em.getTransaction().commit();
             return new CarDTO(car);
@@ -93,6 +123,12 @@ public class CarFacade {
             Car car = em.find(Car.class, id);
 
             em.getTransaction().begin();
+
+            for (Driver driver : car.getDrivers()) {
+                driver.setCar(null);
+                em.merge(driver);
+            }
+
             em.remove(car);
             em.getTransaction().commit();
             return new CarDTO(car);

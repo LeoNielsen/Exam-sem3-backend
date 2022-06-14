@@ -1,11 +1,9 @@
 package entities;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
+import java.util.ArrayList;
+import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -16,13 +14,27 @@ public class Car implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    String dummy;
+    String name;
+    String brand;
+    String make;
+    String year;
+    String sponsor;
+    String color;
+
+    @OneToMany (mappedBy = "car")
+    List<Driver> drivers = new ArrayList<>();
 
     public Car() {
     }
 
-    public Car(String dummy) {
-        this.dummy = dummy;
+    public Car(String name, String brand, String make, String year, String sponsor, String color, List<Driver> drivers) {
+        this.name = name;
+        this.brand = brand;
+        this.make = make;
+        this.year = year;
+        this.sponsor = sponsor;
+        this.color = color;
+        this.drivers = drivers;
     }
 
     public Long getId() {
@@ -33,13 +45,66 @@ public class Car implements Serializable {
         this.id = id;
     }
 
-    public String getDummy() {
-        return dummy;
+    public String getName() {
+        return name;
     }
 
-    public void setDummy(String dummy) {
-        this.dummy = dummy;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getMake() {
+        return make;
+    }
+
+    public void setMake(String make) {
+        this.make = make;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getSponsor() {
+        return sponsor;
+    }
+
+    public void setSponsor(String sponsor) {
+        this.sponsor = sponsor;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public List<Driver> getDrivers() {
+        return drivers;
+    }
+
+    public void setDrivers(List<Driver> drivers) {
+        this.drivers = drivers;
+    }
+
+    public void addDriver(Driver driver) {
+        this.getDrivers().add(driver);
+    }
+    public void removeDriver(Driver driver) {
+        this.getDrivers().remove(driver);
+    }
 }
