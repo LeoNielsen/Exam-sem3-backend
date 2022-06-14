@@ -24,10 +24,13 @@ public class Car implements Serializable {
     @OneToMany (mappedBy = "car")
     List<Driver> drivers = new ArrayList<>();
 
+    @ManyToMany (mappedBy = "cars")
+    List<Race> races = new ArrayList<>();
+
     public Car() {
     }
 
-    public Car(String name, String brand, String make, String year, String sponsor, String color, List<Driver> drivers) {
+    public Car(String name, String brand, String make, String year, String sponsor, String color, List<Driver> drivers, List<Race> races) {
         this.name = name;
         this.brand = brand;
         this.make = make;
@@ -35,6 +38,7 @@ public class Car implements Serializable {
         this.sponsor = sponsor;
         this.color = color;
         this.drivers = drivers;
+        this.races = races;
     }
 
     public Long getId() {
@@ -107,4 +111,22 @@ public class Car implements Serializable {
     public void removeDriver(Driver driver) {
         this.getDrivers().remove(driver);
     }
+
+    public List<Race> getRaces() {
+        return races;
+    }
+
+    public void setRaces(List<Race> races) {
+        this.races = races;
+    }
+
+    public void addRace(Race race) {
+        this.getRaces().add(race);
+    }
+    public void removeRace(Race race) {
+        this.getRaces().remove(race);
+    }
+
+
+
 }

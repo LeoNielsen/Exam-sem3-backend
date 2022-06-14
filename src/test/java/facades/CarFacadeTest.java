@@ -47,8 +47,8 @@ public class CarFacadeTest {
         user2 = new User("AnneW","test123");
         user3 = new User("test","test123");
 
-        car1 = new Car("Lynet","Merceds","Serie 3","2018","Rolex","Silver",new ArrayList<>());
-        car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>());
+        car1 = new Car("Lynet","Mercedes","Series 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
+        car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
 
         driver1 = new Driver("James Brown","1997","amateur","male", user1, car1);
         driver2 = new Driver("Anna West", "2001", "professional", "female",user2, car2);
@@ -62,7 +62,9 @@ public class CarFacadeTest {
             em.getTransaction().begin();
             em.createNamedQuery("driver.deleteAllRows").executeUpdate();
             em.createNamedQuery("user.deleteAllRows").executeUpdate();
+            em.createNamedQuery("race.deleteAllRows").executeUpdate();
             em.createNamedQuery("car.deleteAllRows").executeUpdate();
+
             em.persist(user1);
             em.persist(user2);
             em.persist(user3);
@@ -99,7 +101,7 @@ public class CarFacadeTest {
 
     @Test
     void createCar() {
-        car3 = new Car("test","test","test","test","test","test",new ArrayList<>());
+        car3 = new Car("test","test","test","test","test","test",new ArrayList<>(), new ArrayList<>());
 
         CarDTO carDTO = facade.createCar(new CarDTO(car3));
         List<CarDTO> carDTOS = facade.getAll();

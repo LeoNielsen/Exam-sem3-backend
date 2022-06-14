@@ -1,8 +1,10 @@
 package facades;
 
 import dtos.RaceDTO;
+import entities.Car;
 import entities.Race;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -58,10 +60,19 @@ public class RaceFacade {
 
     public RaceDTO createRace(RaceDTO raceDTO) {
         EntityManager em = emf.createEntityManager();
-        Race race = new Race(raceDTO.getDummy());
+
+
+
+        Race race = new Race(raceDTO.getName(), raceDTO.getLocation(), raceDTO.getStartDate(), raceDTO.getDuration(), new ArrayList<>());
 
         try {
             em.getTransaction().begin();
+            for (long carId : raceDTO.getCarsId()) {
+                Car car = em.find(Car.class, carId);
+                car.addRace(race);
+                race.addCar(car);
+                em.merge(car);
+            }
             em.persist(race);
             em.getTransaction().commit();
             return new RaceDTO(race);
@@ -75,7 +86,7 @@ public class RaceFacade {
         try {
             Race race = em.find(Race.class, id);
             race.setId(id);
-            race.setDummy(raceDTO.getDummy());
+            race.setName(raceDTO.getName());
 
             em.getTransaction().begin();
             em.merge(race);

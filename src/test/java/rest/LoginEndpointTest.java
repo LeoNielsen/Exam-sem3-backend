@@ -68,6 +68,7 @@ public class LoginEndpointTest {
             //Delete existing users and roles to get a "fresh" database
             em.createNamedQuery("driver.deleteAllRows").executeUpdate();
             em.createNamedQuery("user.deleteAllRows").executeUpdate();
+            em.createNamedQuery("race.deleteAllRows").executeUpdate();
             em.createNamedQuery("car.deleteAllRows").executeUpdate();
             em.createQuery("delete from Role").executeUpdate();
 

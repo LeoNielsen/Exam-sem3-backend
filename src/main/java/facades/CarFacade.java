@@ -63,7 +63,7 @@ public class CarFacade {
         EntityManager em = emf.createEntityManager();
 
         try {
-            Car car = new Car(carDTO.getName(), carDTO.getBrand(), carDTO.getMake(), carDTO.getYear(), carDTO.getSponsor(), carDTO.getColor(), new ArrayList<>());
+            Car car = new Car(carDTO.getName(), carDTO.getBrand(), carDTO.getMake(), carDTO.getYear(), carDTO.getSponsor(), carDTO.getColor(), new ArrayList<>(), new ArrayList<>());
 
             for (Long driverId: carDTO.getDriversIds()) {
                 Driver driver = em.find(Driver.class, driverId);

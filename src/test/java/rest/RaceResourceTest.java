@@ -3,12 +3,18 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.RaceDTO;
+import entities.Car;
+import entities.Driver;
 import entities.Race;
+import entities.User;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.ArrayList;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
@@ -16,8 +22,6 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,7 +34,10 @@ public class RaceResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
-    private static Race race1, race2;
+    private static Driver driver1, driver2, driver3;
+    private static User user1, user2, user3;
+    private static Car car1, car2, car3;
+    private static Race race1, race2, race3;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -68,11 +75,46 @@ public class RaceResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        race1 = new Race("1");
-        race2 = new Race("2");
+
+        user1 = new User("JB","test123");
+        user2 = new User("AnneW","test123");
+        user3 = new User("test","test123");
+
+        car1 = new Car("Lynet","Mercedes","Series 3","2018","Rolex","Silver",new ArrayList<>(), new ArrayList<>());
+        car2 = new Car("Bravo","BMW","MX3","2020","DC","Black",new ArrayList<>(), new ArrayList<>());
+        car3 = new Car("test","test","test","test","test","test",new ArrayList<>(), new ArrayList<>());
+
+        driver1 = new Driver("James Brown","1997","amateur","male", user1, car1);
+        driver2 = new Driver("Anna West", "2001", "professional", "female",user2, car2);
+        driver3 = new Driver("test", "test", "test", "tset",user3, car3);
+
+        race1 = new Race("Nas", "Miami", "27-06-22", "210", new ArrayList<>());
+        race2 = new Race("Le Mans", "Nice", "17-08-22", "210", new ArrayList<>());
+
+        car1.addDriver(driver1);
+        car2.addDriver(driver2);
+        car3.addDriver(driver3);
+
+        race1.addCar(car1);
+        race1.addCar(car2);
+        race2.addCar(car1);
+
         try {
             em.getTransaction().begin();
+            em.createNamedQuery("driver.deleteAllRows").executeUpdate();
+            em.createNamedQuery("user.deleteAllRows").executeUpdate();
             em.createNamedQuery("race.deleteAllRows").executeUpdate();
+            em.createNamedQuery("car.deleteAllRows").executeUpdate();
+
+            em.persist(user1);
+            em.persist(user2);
+            em.persist(user3);
+            em.persist(driver1);
+            em.persist(driver2);
+            em.persist(driver3);
+            em.persist(car1);
+            em.persist(car2);
+            em.persist(car3);
             em.persist(race1);
             em.persist(race2);
             em.getTransaction().commit();
@@ -105,7 +147,7 @@ public class RaceResourceTest {
                 .get("/race/all").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", hasItems("1","2"));
+                .body("name", hasItems(race1.getName(), race2.getName()));
     }
 
     @Test
@@ -115,12 +157,14 @@ public class RaceResourceTest {
                 .get("/race/"+race2.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(race2.getDummy()));
+                .body("name", equalTo(race2.getName()));
     }
 
     @Test
     void createRace() {
-        RaceDTO raceDTO = new RaceDTO(new Race("test"));
+        race3 = new Race("test","test","test","test",new ArrayList<>());
+        race3.addCar(car3);
+        RaceDTO raceDTO = new RaceDTO(race3);
         String data = GSON.toJson(raceDTO);
 
         given()
@@ -129,12 +173,13 @@ public class RaceResourceTest {
                 .post("/race/create").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(raceDTO.getDummy()));
+                .body("name", equalTo(raceDTO.getName()))
+                .body("carsId", hasItem(Integer.valueOf(String.valueOf(car3.getId()))));
     }
 
     @Test
     void updateRace() {
-        race1.setDummy("updated");
+        race1.setName("updated");
         RaceDTO raceDTO = new RaceDTO(race1);
         String data = GSON.toJson(raceDTO);
 
@@ -144,7 +189,7 @@ public class RaceResourceTest {
                 .put("/race/update/"+race1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(race1.getDummy()));
+                .body("name", equalTo(race1.getName()));
     }
 
     @Test
@@ -154,6 +199,6 @@ public class RaceResourceTest {
                 .delete("/race/delete/"+race1.getId()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("dummy", equalTo(race1.getDummy()));
+                .body("name", equalTo(race1.getName()));
     }
 }

@@ -7,9 +7,8 @@ package dtos;
 
 import entities.Car;
 import entities.Driver;
-import entities.Role;
+import entities.Race;
 
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +25,7 @@ public class CarDTO {
     String sponsor;
     String color;
     List<Long> driversIds = new ArrayList<>();
+    List<Long> racesIds = new ArrayList<>();
 
     public CarDTO(Car car) {
         if(car.getId() != null)
@@ -37,6 +37,7 @@ public class CarDTO {
         this.sponsor = car.getSponsor();
         this.color = car.getColor();
         this.driversIds = getDrivers(car.getDrivers());
+        this.racesIds = getRaces(car.getRaces());
     }
 
     public static List<CarDTO> getDTOs(List<Car> cars){
@@ -50,6 +51,15 @@ public class CarDTO {
         for (Driver driver : drivers)
         {
             driverIds.add(driver.getId());
+        }
+        return driverIds;
+    }
+
+    private List<Long> getRaces(List<Race> races){
+        List<Long> driverIds = new ArrayList<>();
+        for (Race race : races)
+        {
+            driverIds.add(race.getId());
         }
         return driverIds;
     }
@@ -84,5 +94,9 @@ public class CarDTO {
 
     public List<Long> getDriversIds() {
         return driversIds;
+    }
+
+    public List<Long> getRacesIds() {
+        return racesIds;
     }
 }

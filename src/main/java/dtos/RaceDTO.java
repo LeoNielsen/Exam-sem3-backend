@@ -5,8 +5,10 @@
  */
 package dtos;
 
+import entities.Car;
 import entities.Race;
 
+import javax.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +18,20 @@ import java.util.List;
  */
 public class RaceDTO {
     private long id;
-    String dummy;
+    String name;
+    String location;
+    String startDate;
+    String duration;
+    List<Long> carsId = new ArrayList<>();
 
     public RaceDTO(Race race) {
         if(race.getId() != null)
             this.id = race.getId();
-        this.dummy = race.getDummy();
+        this.name = race.getName();
+        this.location = race.getLocation();
+        this.startDate = race.getStartDate();
+        this.duration = race.getDuration();
+        this.carsId = getCars(race.getCars());
     }
 
     public static List<RaceDTO> getDTOs(List<Race> races){
@@ -30,11 +40,37 @@ public class RaceDTO {
         return raceDTOS;
     }
 
+    private List<Long> getCars(List<Car> cars){
+        List<Long> driverIds = new ArrayList<>();
+        for (Car car : cars)
+        {
+            driverIds.add(car.getId());
+        }
+        return driverIds;
+    }
+
     public long getId() {
         return id;
     }
 
-    public String getDummy() {
-        return dummy;
+    public String getName() {
+        return name;
     }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public List<Long> getCarsId() {
+        return carsId;
+    }
+
 }

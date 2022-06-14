@@ -1,11 +1,9 @@
 package entities;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
+import java.util.ArrayList;
+import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -16,13 +14,23 @@ public class Race implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    String dummy;
+    String name;
+    String location;
+    String startDate;
+    String duration;
+
+    @ManyToMany
+    List<Car> cars = new ArrayList<>();
     
     public Race() {
     }
 
-    public Race(String dummy) {
-        this.dummy = dummy;
+    public Race(String name, String location, String startDate, String duration, List<Car> cars) {
+        this.name = name;
+        this.location = location;
+        this.startDate = startDate;
+        this.duration = duration;
+        this.cars = cars;
     }
 
     public Long getId() {
@@ -33,13 +41,50 @@ public class Race implements Serializable {
         this.id = id;
     }
 
-    public String getDummy() {
-        return dummy;
+    public String getName() {
+        return name;
     }
 
-    public void setDummy(String dummy) {
-        this.dummy = dummy;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public List<Car> getCars() {
+        return cars;
+    }
+
+    public void setCars(List<Car> cars) {
+        this.cars = cars;
+    }
+
+    public void addCar(Car car) {
+        this.getCars().add(car);
+    }
+    public void removeCar(Car car) {
+        this.getCars().remove(car);
+    }
 }
